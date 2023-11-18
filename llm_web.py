@@ -116,7 +116,7 @@ class WebSearch(llm.Model):
         self.tools = load_tools(
                 [
                     "ddg-search",
-                    # "wikipedia",
+                    "wikipedia",
                     "llm-math",
                     ],
                 llm=chatgpt)
