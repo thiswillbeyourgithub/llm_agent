@@ -7,5 +7,6 @@ Plugin for [llm](https://llm.datasette.io/) by the great [simonw](https://simonw
 * Very early stage, done mostly while procrastinating work. Will improve a lot.
 
 ## TODO
+* tell simonw
 * find a way to implement streaming
 * *later* use griptape instead of langchain when they implement their search
