@@ -161,7 +161,7 @@ class WebSearch(llm.Model):
             )
 
             @tool
-            def complicated(question: str) -> str:
+            def BigTask(question: str) -> str:
                 "If you have a task requiring multiple steps, use this tool and I'll give you the final answer."
                 question = question.replace("The end goal it to answer this:", "").strip()
                 steps = subtasker.run(question).splitlines()
@@ -201,7 +201,7 @@ class WebSearch(llm.Model):
                 return final_answer
 
             self.sub_agent = initialize_agent(
-                    self.tools + [complicated],
+                    self.tools + [BigTask],
                     chatgpt,
                     verbose=self.verbose,
                     agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,
@@ -212,7 +212,7 @@ class WebSearch(llm.Model):
                     )
 
         self.agent = initialize_agent(
-                self.tools + [complicated, userinput],
+                self.tools + [BigTask, userinput],
                 chatgpt,
                 verbose=self.verbose,
                 agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,
