@@ -25,8 +25,8 @@ sub_memory = ConversationBufferMemory(memory_key="chat_history", return_messages
 
 DEFAULT_MODEL = "gpt-3.5-turbo-1106"
 DEFAULT_TEMP = 0
-DEFAULT_TIMEOUT = 60
-DEFAULT_MAX_ITER = 10
+DEFAULT_TIMEOUT = 120
+DEFAULT_MAX_ITER = 100
 DEFAULT_TASKS = True
 
 
