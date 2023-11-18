@@ -162,7 +162,7 @@ class WebSearch(llm.Model):
 
 @tool
 def userinput(question: str) -> str:
-    "Talk with the user if no other tool is currently needed."
+    "Talk with the user if no other tool is currently needed. Don't use it to ask question that could be answered using the search tools."
     raise AskUser(question)
 
 
