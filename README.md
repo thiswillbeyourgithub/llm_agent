@@ -6,6 +6,11 @@ Plugin for [llm](https://llm.datasette.io/) by the great [simonw](https://simonw
 * to run: `llm chat -m web`
 * Very early stage, done mostly while procrastinating work. Will improve a lot.
 
+## Features
+* Multiple search engines: duckduckgo, metaphor, tavily, wikipedia
+* BigTask tool: used to split a task into subtasks
+* Math tool: calculator included
+
 ## TODO
 * tell simonw
 * make autonomous agent more stable
