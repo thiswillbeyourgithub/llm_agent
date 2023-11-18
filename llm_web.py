@@ -22,7 +22,7 @@ from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 
 memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
-sub_memory = ConversationBufferWindowMemory(memory_key="chat_history", return_messages=True, k=5)
+sub_memory = ConversationBufferWindowMemory(memory_key="chat_history", return_messages=True, k=2)
 
 DEFAULT_MODEL = "gpt-3.5-turbo-1106"
 DEFAULT_TEMP = 0
