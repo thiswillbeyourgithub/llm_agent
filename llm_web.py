@@ -21,6 +21,7 @@ DEFAULT_MODEL = "gpt-3.5-turbo-1106"
 DEFAULT_TEMP = 0
 DEFAULT_TIMEOUT = 60
 DEFAULT_MAX_ITER = 10
+DEFAULT_TREE = False
 
 
 @llm.hookimpl
@@ -50,6 +51,9 @@ class WebSearch(llm.Model):
         max_iter: Optional[int] = Field(
                 description="Agent max iteration",
                 default=DEFAULT_MAX_ITER)
+        tree: Optional[bool] = Field(
+                description="True to use tree of thoughts",
+                default=DEFAULT_TREE)
 
         @field_validator("quiet")
         def validate_quiet(cls, quiet):
@@ -67,6 +71,10 @@ class WebSearch(llm.Model):
         def validate_max_iter(cls, max_iter):
             assert isinstance(max_iter, int), "Invalid type for max_iter"
 
+        @field_validator("tree")
+        def validate_tree(cls, tree):
+            assert isinstance(tree, bool), "Invalid type for tree"
+
     def __init__(self):
         self.previous_options = json.dumps({})
 
@@ -77,8 +85,10 @@ class WebSearch(llm.Model):
             temperature,
             timeout,
             max_iter,
+            tree,
             ):
         self.verbose = not quiet
+        self.tree = tree
 
         openai_key = llm.get_key(None, "openai", env_var="OPENAI_API_KEY")
         if not openai_key:
@@ -133,12 +143,16 @@ class WebSearch(llm.Model):
                 "temperature": prompt.options.temperature or DEFAULT_TEMP,
                 "timeout": prompt.options.timeout or DEFAULT_TIMEOUT,
                 "max_iter": prompt.options.max_iter or DEFAULT_MAX_ITER,
+                "tree": prompt.options.tree or DEFAULT_TREE,
                 }
         if json.dumps(options) != json.dumps(self.previous_options):
             self._configure(**options)
         with get_openai_callback() as cb:
             try:
-                answer = self.agent.run(question)
+                if self.tree:
+                    pass
+                else:
+                    answer = self.agent.run(question)
             except AskUser as err:
                 answer = err.message
 
