@@ -93,7 +93,7 @@ class WebSearch(llm.Model):
             tasks,
             ):
         self.verbose = not quiet
-        self.tasks = True #tasks
+        self.tasks = tasks
 
         openai_key = llm.get_key(None, "openai", env_var="OPENAI_API_KEY")
         if not openai_key:
