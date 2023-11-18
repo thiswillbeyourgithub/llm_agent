@@ -145,7 +145,7 @@ class WebSearch(llm.Model):
             def metaphor_search(query: str) -> str:
                 """Advanced search using Metaphor. Use for advanced topics or
                 if the user asks for it."""
-                res = mtph.search(query, use_autoprompt=True, num_results=5)
+                res = mtph.search(query, use_autoprompt=False, num_results=5)
 
                 output = "Here's the result of the search:"
                 for result in res.get_contents().contents:
