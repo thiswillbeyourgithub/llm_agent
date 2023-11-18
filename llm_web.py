@@ -1,3 +1,4 @@
+from bs4 import BeautifulSoup
 import time
 from tqdm import tqdm
 from textwrap import dedent
@@ -145,8 +146,15 @@ class WebSearch(llm.Model):
                 """Advanced search using Metaphor. Use for advanced topics or
                 if the user asks for it."""
                 res = mtph.search(query, use_autoprompt=True, num_results=5)
-                content = mtph.get_contents(res)
-                return content
+
+                output = "Here's the result of the search:\n"
+                for result in res.get_contents().contents:
+                    html = result.extract
+                    url = result.url
+                    text = BeautifulSoup(html).get_text().strip()
+                    output += f"- {url} :\n'''\n{text}\n'''"
+                return output
+
             self.tools.append(mtph_search)
         except Exception:
             pass
