@@ -28,8 +28,8 @@ tag_message = "{new_version}"
 tag_scope = "default"
 pre_commit_hook = ""
 post_commit_hook = ""
-tag = false
-commit = false
+tag = true
+commit = true
 push = false
 
 [tool.bumpver.file_patterns]
