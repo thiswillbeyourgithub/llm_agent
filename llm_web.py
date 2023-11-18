@@ -133,9 +133,20 @@ class WebSearch(llm.Model):
             I want to answer the question '{question}'. Please generate up to 5 steps needed to answer that question.
             Don't worry about intermediate steps seeming too complicated, we can subdivide them later on.
             If the question is already phrased as a series of steps, just rewrite into the appropriate format.
-            ALWAYS answer using the appropriate format.
+            Use your tools to answer the question.
 
+            ALWAYS answer using the appropriate format.
             APPROPRIATE FORMAT: one step per line, without enumeration.
+
+            Example of format:
+            ```
+            Find the name of the owner of MacDonald's
+            Find his age
+            Multiply it by 4
+            Return the answer
+            ```
+
+            Your turn now:
             """)
             prompt = PromptTemplate(
                 input_variables=["question"],
@@ -158,9 +169,8 @@ class WebSearch(llm.Model):
                 header += "Here is the step planning:"
                 print("Steps:")
                 for i, step in enumerate(steps):
-                    step = f"\n{i}. {step}. Answer: STEPANSWER"
+                    step = f"\n{i+1}. {step}. Answer: STEPANSWER"
                     header += step
-                    print(step.strip())
 
                 answers = []
                 for i, step in tqdm(enumerate(steps), desc="Executing complicated task", unit="step"):
@@ -170,6 +180,7 @@ class WebSearch(llm.Model):
                     stepprompt = stepprompt.replace(" Answer: STEPANSWER", "").strip()
 
                     stepprompt += f"\n\nYour current task is '{step}'"
+                    print(stepprompt)
 
                     intermediate_answer = self.sub_agent.run(stepprompt)
                     answers.append(intermediate_answer)
