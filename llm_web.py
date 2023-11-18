@@ -193,7 +193,9 @@ class WebSearch(llm.Model):
 
             @tool
             def BigTask(question: str) -> str:
-                "If you have a task requiring multiple steps, use this tool and I'll give you the final answer."
+                """If you have a task requiring multiple steps, use this tool.
+                If the task is directly from the user: give my his
+                exact instructions without any reformulation."""
                 question = question.replace("The end goal it to answer this:", "").strip()
                 steps = subtasker.run(question).splitlines()
 
