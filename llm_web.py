@@ -157,7 +157,7 @@ class WebSearch(llm.Model):
                 header += "Here is the step planning:"
                 print("Steps:")
                 for i, step in enumerate(steps):
-                    step = f"\n{i}. {step}. STEPANSWER"
+                    step = f"\n{i}. {step}. Answer: STEPANSWER"
                     header += step
                     print(step).strip()
 
@@ -165,8 +165,8 @@ class WebSearch(llm.Model):
                 for i, step in tqdm(enumerate(steps), desc="Executing complicated task", unit="step"):
                     stepprompt = header
                     for ans in answers:
-                        stepprompt = stepprompt.replace("STEPANSWER", ans, 1)
-                    stepprompt = stepprompt.replace(" STEPANSWER", "")
+                        stepprompt = stepprompt.replace("Answer: STEPANSWER", ans, 1)
+                    stepprompt = stepprompt.replace(" Answer: STEPANSWER", "").strip()
 
                     stepprompt += f"\n\nYour current task is '{step}'"
 
@@ -175,8 +175,8 @@ class WebSearch(llm.Model):
 
                 prompt = header
                 for ans in answers:
-                    prompt = prompt.replace("STEPANSWER", ans, 1)
-                prompt += "\nNow answer the initial question."
+                    prompt = prompt.replace("Answer: STEPANSWER", ans, 1)
+                prompt += "\n\nNow please answer the initial question."
                 final_answer = self.sub_agent.run(prompt)
 
                 return final_answer
