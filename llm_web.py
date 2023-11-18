@@ -220,7 +220,7 @@ class WebSearch(llm.Model):
                         print(f"Error {err}, retrying after 2s")
                         time.sleep(2)
                         intermediate_answer = self.sub_agent.run(stepprompt)
-                        intermediate_answer = self._validate_answer(stepprompt, intermediate_answer)
+                        # intermediate_answer = self._validate_answer(stepprompt, intermediate_answer)
 
                     answers.append(intermediate_answer)
 
@@ -310,7 +310,7 @@ class WebSearch(llm.Model):
         with get_openai_callback() as cb:
             try:
                 answer = self.agent.run(question)
-                answer = self._validate_answer(question, answer)
+                # answer = self._validate_answer(question, answer)
             except AskUser as err:
                 answer = err.message
 
