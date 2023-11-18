@@ -189,6 +189,7 @@ class WebSearch(llm.Model):
                         print(f"Error {err}, retrying after 2s")
                         time.sleep(2)
                         intermediate_answer = self.sub_agent.run(stepprompt)
+                        intermediate_answer = self._validate_answer(stepprompt, intermediate_answer)
 
                     answers.append(intermediate_answer)
 
@@ -210,6 +211,40 @@ class WebSearch(llm.Model):
                     max_execution_time=DEFAULT_TIMEOUT,
                     max_iterations=DEFAULT_MAX_ITER
                     )
+
+        template = dedent("""
+        Given a question and an answer, your task is to check the apparent validity of the answer.
+        If the answer seems correct: answer 'VALID:'
+        In any other situation: answer in the format 'INVALID:REASON' replacing REASON by a brief explanation.
+
+        ALWAYS answer using the appropriate format.
+        APPROPRIATE FORMAT: either 'VALID:' or 'INVALID:REASON'
+
+        Example of valid output: 'VALID:'
+        Example of invalid output: 'INVALID:Michelle Obama is not the Prime minister of the UK'
+
+        Your turn now:
+
+        Here's the answer:
+        '''
+        {answer}
+        '''
+
+        Here's the question:
+        '''
+        {question}
+        '''
+        """)
+        prompt = PromptTemplate(
+            input_variables=["question", "answer"],
+            template=template,
+        )
+        self.validity_checker = LLMChain(
+            llm=chatgpt,
+            prompt=prompt,
+            output_key="check",
+            verbose=self.verbose,
+        )
 
         self.agent = initialize_agent(
                 self.tools + [BigTask, userinput],
@@ -237,11 +272,32 @@ class WebSearch(llm.Model):
         with get_openai_callback() as cb:
             try:
                 answer = self.agent.run(question)
+                answer = self._validate_answer(question, answer)
             except AskUser as err:
                 answer = err.message
 
             print(f"\nToken so far: {cb.total_tokens} or ${cb.total_cost}")
         return answer
+
+    def _validate_answer(self, question, answer, depth=0):
+        try:
+            check = self.validity_checker.run(question=question, answer=answer)
+            if self.verbose:
+                print(f"Validity checker output: {check}")
+
+            assert ":" in check, f"check is missing: '{check}'"
+            state = check.split(":")[0]
+            reason = ":".join(check.split(":")[1:])
+            assert state in ["VALID", "INVALID"], f"Invalid state: '{state}'"
+
+            if state == "INVALID":
+                new_answer = self.agent.run(
+                        f"Try again another way because your answer seems invalid: {reason}")
+                return self._validate_answer(question, new_answer, depth+1)
+            else:
+                return answer
+        except Exception as err:
+            print(f"Error when checking validity: '{err}'")
 
 @tool
 def userinput(question: str) -> str:
