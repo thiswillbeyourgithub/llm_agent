@@ -1,3 +1,4 @@
+import json
 import llm
 import click
 import os
@@ -66,24 +67,17 @@ class WebSearch(llm.Model):
         def validate_max_iter(cls, max_iter):
             assert isinstance(max_iter, int), "Invalid type for max_iter"
 
-    def __init__(
+    def __init__(self):
+        self.previous_options = json.dumps({})
+
+    def _configure(
             self,
-            quiet=False,
-            openaimodel=DEFAULT_MODEL,
-            temperature=DEFAULT_TEMP,
-            timeout=DEFAULT_TIMEOUT,
-            max_iter=DEFAULT_MAX_ITER,
-            *args,
-            **kwargs,
+            quiet,
+            openaimodel,
+            temperature,
+            timeout,
+            max_iter,
             ):
-        if args:
-            raise click.ClickException(
-                    f"Found extra args: {args}"
-            )
-        if kwargs:
-            raise click.ClickException(
-                    f"Found extra kwargs: {kwargs}"
-            )
         self.verbose = not quiet
 
         openai_key = llm.get_key(None, "openai", env_var="OPENAI_API_KEY")
@@ -135,6 +129,15 @@ class WebSearch(llm.Model):
 
     def execute(self, prompt, stream, response, conversation):
         question = prompt.prompt
+        options = {
+                "quiet": prompt.options.quiet or False,
+                "openaimodel": prompt.options.openaimodel or DEFAULT_MODEL,
+                "temperature": prompt.options.temperature or DEFAULT_TEMP,
+                "timeout": prompt.options.timeout or DEFAULT_TIMEOUT,
+                "max_iter": prompt.options.max_iter or DEFAULT_MAX_ITER,
+                }
+        if json.dumps(options) != json.dumps(self.previous_options):
+            self._configure(**options)
         with get_openai_callback() as cb:
             try:
                 answer = self.agent.run(question)
