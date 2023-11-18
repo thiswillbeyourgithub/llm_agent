@@ -117,7 +117,7 @@ class WebSearch(llm.Model):
                 agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,
                 memory=memory,
                 handle_parsing_errors=True,
-                max_execution_time=30,
+                max_execution_time=DEFAULT_TIMEOUT,
                 max_iterations=DEFAULT_MAX_ITER
                 )
 
