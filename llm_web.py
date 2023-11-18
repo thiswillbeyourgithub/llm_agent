@@ -125,8 +125,6 @@ class WebSearch(llm.Model):
                 max_iterations=DEFAULT_MAX_ITER
                 )
 
-        print("I'm an Agent based on OpenAI models. Ask your question and I'll search the internet for you.")
-
     def execute(self, prompt, stream, response, conversation):
         question = prompt.prompt
         options = {
