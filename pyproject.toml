@@ -1,5 +1,6 @@
 [project]
 name = "llm-web"
+version = "0.2"
 description = "plugin for simonw's llm to add a web search LLM agent"
 readme = "README.md"
 authors = [{ name = "thiswillbeyourgithub"}]
