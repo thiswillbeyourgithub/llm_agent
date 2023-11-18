@@ -1,6 +1,5 @@
 [project]
 name = "llm-web"
-version = "0.1"
 description = "plugin for simonw's llm to add a web search LLM agent"
 readme = "README.md"
 authors = [{ name = "thiswillbeyourgithub"}]
@@ -20,3 +19,19 @@ Homepage = "https://github.com/thiswillbeyourgithub/llm_web"
 
 [project.entry-points.llm]
 web = "llm_web"
+
+[tool.bumpver]
+current_version = "0.1"
+version_pattern = "MAJOR.MINOR"
+commit_message = "bump version {old_version} -> {new_version}"
+tag_message = "{new_version}"
+tag_scope = "default"
+pre_commit_hook = ""
+post_commit_hook = ""
+tag = false
+commit = false
+push = false
+
+[tool.bumpver.file_patterns]
+"pyproject.toml" = ['current_version = "{version}"']
+"llm_web.py" = ["VERSION = {version}"]
