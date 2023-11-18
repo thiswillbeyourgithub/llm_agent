@@ -147,12 +147,13 @@ class WebSearch(llm.Model):
                 if the user asks for it."""
                 res = mtph.search(query, use_autoprompt=True, num_results=5)
 
-                output = "Here's the result of the search:\n"
+                output = "Here's the result of the search:"
                 for result in res.get_contents().contents:
                     html = result.extract
                     url = result.url
                     text = BeautifulSoup(html).get_text().strip()
-                    output += f"- {url} :\n'''\n{text}\n'''"
+                    output += f"\n- {url} :\n'''\n{text}\n'''\n"
+                output = output.strip()
                 return output
 
             self.tools.append(mtph_search)
