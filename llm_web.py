@@ -206,6 +206,7 @@ class WebSearch(llm.Model):
                     self.tools, # + [BigTask],  # don't allow recursive call to BigTask
                     chatgpt,
                     verbose=self.verbose,
+                    # agent=AgentType.STRUCTURED_CHAT_ZERO_SHOT_REACT_DESCRIPTION,
                     agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,
                     memory=sub_memory,
                     handle_parsing_errors=True,
