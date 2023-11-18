@@ -12,6 +12,7 @@ dependencies = [
     "numexpr==2.8.7",
     "duckduckgo-search==3.9.5",
     "wikipedia==1.4.0",
+    "tqdm==4.64.0",
     ]
 
 [projects.urls]

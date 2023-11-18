@@ -8,6 +8,6 @@ Plugin for [llm](https://llm.datasette.io/) by the great [simonw](https://simonw
 
 ## TODO
 * tell simonw
-* implement tree of thoughts etc
+* make autonomous agent more stable
 * find a way to implement streaming
-* *later* use griptape instead of langchain when they implement their search
+* *later* use griptape instead of langchain when they implement their search?

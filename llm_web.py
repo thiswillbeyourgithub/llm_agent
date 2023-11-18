@@ -1,3 +1,4 @@
+from tqdm import tqdm
 from textwrap import dedent
 import json
 import llm
@@ -161,7 +162,7 @@ class WebSearch(llm.Model):
                     print(step).strip()
 
                 answers = []
-                for i, step in enumerate(steps):
+                for i, step in tqdm(enumerate(steps), desc="Executing complicated task", unit="step"):
                     stepprompt = header
                     for ans in answers:
                         stepprompt = stepprompt.replace("STEPANSWER", ans, 1)
