@@ -19,6 +19,7 @@ memory = ConversationBufferMemory(memory_key="chat_history", return_messages=Tru
 DEFAULT_MODEL = "gpt-3.5-turbo-1106"
 DEFAULT_TEMP = 0
 DEFAULT_TIMEOUT = 60
+DEFAULT_MAX_ITER = 10
 
 
 @llm.hookimpl
@@ -45,6 +46,9 @@ class WebSearch(llm.Model):
         timeout: Optional[int] = Field(
                 description="Agent timeout",
                 default=DEFAULT_TIMEOUT)
+        max_iter: Optional[int] = Field(
+                description="Agent max iteration",
+                default=DEFAULT_MAX_ITER)
 
         @field_validator("quiet")
         def validate_quiet(cls, quiet):
@@ -58,12 +62,17 @@ class WebSearch(llm.Model):
         def validate_timeout(cls, timeout):
             assert isinstance(timeout, int), "Invalid type for timeout"
 
+        @field_validator("max_iter")
+        def validate_max_iter(cls, max_iter):
+            assert isinstance(max_iter, int), "Invalid type for max_iter"
+
     def __init__(
             self,
+            quiet=False,
             openaimodel=DEFAULT_MODEL,
             temperature=DEFAULT_TEMP,
-            quiet=False,
             timeout=DEFAULT_TIMEOUT,
+            max_iter=DEFAULT_MAX_ITER,
             ):
         self.verbose = not quiet
 
@@ -109,6 +118,7 @@ class WebSearch(llm.Model):
                 memory=memory,
                 handle_parsing_errors=True,
                 max_execution_time=30,
+                max_iterations=DEFAULT_MAX_ITER
                 )
 
         print("I'm an Agent based on OpenAI models. Ask your question and I'll search the internet for you.")
