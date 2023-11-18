@@ -159,7 +159,7 @@ class WebSearch(llm.Model):
                 for i, step in enumerate(steps):
                     step = f"\n{i}. {step}. Answer: STEPANSWER"
                     header += step
-                    print(step).strip()
+                    print(step.strip())
 
                 answers = []
                 for i, step in tqdm(enumerate(steps), desc="Executing complicated task", unit="step"):
