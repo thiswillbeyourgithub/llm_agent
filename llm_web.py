@@ -142,7 +142,7 @@ class WebSearch(llm.Model):
         try:
             mtph = Metaphor(api_key=os.environ["METAPHOR_API_KEY"])
             @tool
-            def mtph_search(query: str) -> str:
+            def metaphor_search(query: str) -> str:
                 """Advanced search using Metaphor. Use for advanced topics or
                 if the user asks for it."""
                 res = mtph.search(query, use_autoprompt=True, num_results=5)
@@ -156,7 +156,7 @@ class WebSearch(llm.Model):
                 output = output.strip()
                 return output
 
-            self.tools.append(mtph_search)
+            self.tools.append(metaphor_search)
         except Exception:
             pass
 
