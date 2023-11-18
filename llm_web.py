@@ -13,7 +13,6 @@ from langchain.memory import ConversationBufferMemory
 from langchain.agents import load_tools
 from langchain.callbacks import get_openai_callback
 from langchain.tools import tool
-# from langchain.callbacks.base import BaseCallbackHandler
 
 memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
 
@@ -65,13 +64,11 @@ class WebSearch(llm.Model):
             print("No Tavily API key given, will only use duckduckgo for search.")
         os.environ["TAVILY_API_KEY"] = tavily_key
 
-        # self.llm_stream = StreamingHandler()
         chatgpt = ChatOpenAI(
                 model_name=openaimodel,
                 temperature=temperature,
                 verbose=True,
-                # callbacks=[self.llm_stream],
-                # streaming=True,
+                streaming=False,
                 )
         self.tools = load_tools(
                 [
@@ -94,7 +91,6 @@ class WebSearch(llm.Model):
                 self.tools,
                 chatgpt,
                 verbose=self.verbose,
-                #agent=AgentType.STRUCTURED_CHAT_ZERO_SHOT_REACT_DESCRIPTION,
                 agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,
                 memory=memory,
                 handle_parsing_errors=True,
@@ -123,7 +119,3 @@ def userinput(question: str) -> str:
 class AskUser(Exception):
     def __init__(self, message):
         self.message = message
-
-# class StreamingHandler(BaseCallbackHandler):
-#     def on_llm_new_token(self, token: str, **kwargs) -> None:
-#         yield token
