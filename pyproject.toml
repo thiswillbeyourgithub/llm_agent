@@ -34,5 +34,5 @@ commit = true
 push = false
 
 [tool.bumpver.file_patterns]
-"pyproject.toml" = ['current_version = "{version}"']
+"pyproject.toml" = ['current_version = "{version}"', 'version = "{version}"']
 "llm_web.py" = ["VERSION = {version}"]
