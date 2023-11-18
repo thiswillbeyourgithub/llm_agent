@@ -12,7 +12,253 @@ Plugin for [llm](https://llm.datasette.io/) by the great [simonw](https://simonw
 * find a way to implement streaming
 * *later* use griptape instead of langchain when they implement their search?
 
-## DEMO (cherry picked)
+## DEMO
+### DEMO #1
+Question was: `Use bigtask to tell me if salmon or tuna is the worst in terms of bioaccumulation of pollutants`
+Total cost:  23885 or $0.0248 using ChatGPT-3.5-turbo-1106
+
+```
+Type 'exit' or 'quit' to exit
+Type '!multi' to enter multiple lines, then '!end' to finish
+>  Use bigtask to tell me if salmon or tuna is the worst in terms of bioaccumulation of pollutants
+
+
+> Entering new AgentExecutor chain...
+'''json
+{
+    "action": "BigTask",
+    "action_input": "Salmon and tuna are both susceptible to bioaccumulation of pollutants, but the extent of bioaccumulation can vary based on factors such as species, habitat, and diet. However, in general, larger predatory fish such as tuna tend to accumulate higher levels of pollutants due to their position in the food chain. Therefore, tuna is generally considered to have a higher risk of bioaccumulation of pollutants compared to salmon."
+}
+'''
+
+> Entering new LLMChain chain...
+Prompt after formatting:
+
+At the end, I want to answer the question 'Salmon and tuna are both susceptible to bioaccumulation of pollutants, but the extent of bioaccumulation can vary based on factors such as species, habitat, and diet. However, in general, larger predatory fish such as tuna tend to accumulate higher levels of pollutants due to their position in the food chain. Therefore, tuna is generally considered to have a higher risk of bioaccumulation of pollutants compared to salmon.'. Your task is to generate a few intermediate steps needed to answer that question. Don't create steps that are too vague or that would need to be broken down themselves.
+The number of steps should ideally be 3 to 5, but can be up to 10 if the question specifically asks for an indepth search.
+If the question is already phrased as a series of steps, just rewrite into the appropriate format.
+Use your tools to answer the question.
+
+ALWAYS answer using the appropriate format.
+APPROPRIATE FORMAT: one step per line, without enumeration.
+
+Example of format:
+'''
+Find the name of the owner of MacDonald's
+Find his age
+Multiply it by 4
+Return the answer
+'''
+
+Your turn now:
+
+
+> Finished chain.
+Executing complicated task: 0step [00:00, ?step/s]The end goal it to answer this: 'Salmon and tuna are both susceptible to bioaccumulation of pollutants, but the extent of bioaccumulation can vary based on factors such as species, habitat, and diet. However, in general, larger predatory fish such as tuna tend to accumulate higher levels of pollutants due to their position in the food chain. Therefore, tuna is generally considered to have a higher risk of bioaccumulation of pollutants compared to salmon.'.
+
+Here is the task planning:
+1. Research the bioaccumulation of pollutants in salmon and tuna. TODO
+2. Identify the factors that can affect the extent of bioaccumulation in fish. LATER
+3. Compare the bioaccumulation levels in salmon and tuna based on species, habitat, and diet. LATER
+4. Analyze the position of tuna and salmon in the food chain and its impact on bioaccumulation levels. LATER
+5. Draw a conclusion on the relative risk of bioaccumulation of pollutants in tuna compared to salmon. LATER
+
+Your current task is #1
+
+
+> Entering new AgentExecutor chain...
+'''json
+{
+    "action": "duckduckgo_search",
+    "action_input": "bioaccumulation of pollutants in salmon and tuna"
+}
+'''
+Observation: Once heavy metals enter the aquatic systems, they are dissolved in the water and easily accumulate in the different parts of aquatic living organisms, including fish, and subsequently enter into consumers of these contaminated fish [ 9 ]. Salish Sea Toxics in the Food Web Updated June 2021 based on data available through December 2020. Neutral Trend Concentrations of harmful legacy metals and persistent organic pollutants such as polychlorinated biphenyls (PCBs) and polybrominated diphenyl ethers (PBDEs) have been decreasing in animal and plant life over time in many locations. Organic pollutants Toxins Trace elements Download chapter PDF Learning goals Understand how different pollutants affect marine mammals. Learn how biomagnification and bioaccumulation affect marine life. Learn how to monitor wildlife health by post-mortem examinations. 1 Introduction Biotransport of Persistent Organic Pollutants and Heavy Metals by Pacific Salmon in the Northwestern Pacific Ocean Vasiliy Tsygankov Chapter First Online: 31 October 2023 14 Accesses Part of the Earth and Environmental Sciences Library book series (EESL) Abstract 1 Citations Metrics Abstract In the first review of potentially toxic elements (PTEs) in fish in water ecosystems in Serbia, 40 studies related to fish contamination with PTEs were identified and evaluated. Studies of concentrations of PTEs in fish tissues covered 28 ecosystems (108 localities).
+Thought:'''json
+{
+    "action": "Final Answer",
+    "action_input": "The bioaccumulation of pollutants in salmon and tuna is a result of the accumulation of heavy metals and persistent organic pollutants in the aquatic systems, which are then absorbed by the fish and subsequently enter into the consumers of these contaminated fish. The concentrations of harmful legacy metals and persistent organic pollutants have been decreasing in animal and plant life over time in many locations. Additionally, studies have evaluated fish contamination with potentially toxic elements in various ecosystems."
+}
+'''
+
+> Finished chain.
+Executing complicated task: 1step [00:06,  6.47s/step]The end goal it to answer this: 'Salmon and tuna are both susceptible to bioaccumulation of pollutants, but the extent of bioaccumulation can vary based on factors such as species, habitat, and diet. However, in general, larger predatory fish such as tuna tend to accumulate higher levels of pollutants due to their position in the food chain. Therefore, tuna is generally considered to have a higher risk of bioaccumulation of pollutants compared to salmon.'.
+
+Here is the task planning:
+1. Research the bioaccumulation of pollutants in salmon and tuna. Done: 'The bioaccumulation of pollutants in salmon and tuna is a result of the accumulation of heavy metals and persistent organic pollutants in the aquatic systems, which are then absorbed by the fish and subsequently enter into the consumers of these contaminated fish. The concentrations of harmful legacy metals and persistent organic pollutants have been decreasing in animal and plant life over time in many locations. Additionally, studies have evaluated fish contamination with potentially toxic elements in various ecosystems.'
+2. Identify the factors that can affect the extent of bioaccumulation in fish. TODO
+3. Compare the bioaccumulation levels in salmon and tuna based on species, habitat, and diet. LATER
+4. Analyze the position of tuna and salmon in the food chain and its impact on bioaccumulation levels. LATER
+5. Draw a conclusion on the relative risk of bioaccumulation of pollutants in tuna compared to salmon. LATER
+
+Your current task is #2
+
+
+> Entering new AgentExecutor chain...
+'''json
+{
+    "action": "Wikipedia",
+    "action_input": "Factors affecting bioaccumulation in fish"
+}
+'''
+Observation: Page: Bioaccumulation
+Summary: Bioaccumulation is the gradual accumulation of substances, such as pesticides or other chemicals, in an organism.  Bioaccumulation occurs when an organism absorbs a substance faster than it can be lost or eliminated by catabolism and excretion. Thus, the longer the biological half-life of a toxic substance, the greater the risk of chronic poisoning, even if environmental levels of the toxin are not very high. Bioaccumulation, for example in fish, can be predicted by models. Hypothesis for molecular size cutoff criteria for use as bioaccumulation potential indicators are not supported by data. Biotransformation can strongly modify bioaccumulation of chemicals in an organism.Toxicity induced by metals is associated with bioaccumulation and biomagnification. Storage or uptake of a metal faster than it is metabolized and excreted leads to the accumulation of that metal. The presence of various chemicals and harmful substances in the environment can be analyzed and assessed with a proper knowledge on bioaccumulation helping with chemical control and usage.An organism can take up chemicals by breathing, absorbing through skin or swallowing. When the concentration of a chemical is higher within the organism compared to its surroundings (air or water), it is referred to as bioconcentration. Biomagnification is another process related to bioaccumulation as the concentration of the chemical or metal increases as it moves up from one trophic level to another. Naturally, the process of bioaccumulation is necessary for an organism to grow and develop; however, accumulation of harmful substances can also occur.
+
+Page: Persistent, bioaccumulative and toxic substances
+Summary: Persistent, bioaccumulative and toxic substances (PBTs) are a class of compounds that have high resistance to degradation from abiotic and biotic factors, high mobility in the environment and high toxicity.  Because of these factors PBTs have been observed to have a high order of bioaccumulation and biomagnification, very long retention times in various media, and widespread distribution across the globe.  Most PBTs in the environment are either created through industry or are unintentional byproducts.
+
+Page: Methylmercury
+Summary: Methylmercury (sometimes methyl mercury) is an organometallic cation with the formula [CH3Hg]+. It is the simplest organomercury compound. Methylmercury is extremely toxic, and its derivatives are the major source of organic mercury for humans. It is a bioaccumulative environmental toxicant.
+Thought:'''json
+{
+    "action": "Final Answer",
+    "action_input": "Factors affecting bioaccumulation in fish include the organism's biological half-life of a toxic substance, biotransformation, toxicity induced by metals, bioconcentration, and biomagnification. Additionally, the presence of persistent, bioaccumulative, and toxic substances (PBTs) can contribute to high levels of bioaccumulation and biomagnification in fish. Methylmercury, for example, is a bioaccumulative environmental toxicant."
+}
+'''
+
+> Finished chain.
+Executing complicated task: 2step [00:12,  6.03s/step]The end goal it to answer this: 'Salmon and tuna are both susceptible to bioaccumulation of pollutants, but the extent of bioaccumulation can vary based on factors such as species, habitat, and diet. However, in general, larger predatory fish such as tuna tend to accumulate higher levels of pollutants due to their position in the food chain. Therefore, tuna is generally considered to have a higher risk of bioaccumulation of pollutants compared to salmon.'.
+
+Here is the task planning:
+1. Research the bioaccumulation of pollutants in salmon and tuna. Done: 'The bioaccumulation of pollutants in salmon and tuna is a result of the accumulation of heavy metals and persistent organic pollutants in the aquatic systems, which are then absorbed by the fish and subsequently enter into the consumers of these contaminated fish. The concentrations of harmful legacy metals and persistent organic pollutants have been decreasing in animal and plant life over time in many locations. Additionally, studies have evaluated fish contamination with potentially toxic elements in various ecosystems.'
+2. Identify the factors that can affect the extent of bioaccumulation in fish. Done: 'Factors affecting bioaccumulation in fish include the organism's biological half-life of a toxic substance, biotransformation, toxicity induced by metals, bioconcentration, and biomagnification. Additionally, the presence of persistent, bioaccumulative, and toxic substances (PBTs) can contribute to high levels of bioaccumulation and biomagnification in fish. Methylmercury, for example, is a bioaccumulative environmental toxicant.'
+3. Compare the bioaccumulation levels in salmon and tuna based on species, habitat, and diet. TODO
+4. Analyze the position of tuna and salmon in the food chain and its impact on bioaccumulation levels. LATER
+5. Draw a conclusion on the relative risk of bioaccumulation of pollutants in tuna compared to salmon. LATER
+
+Your current task is #3
+
+
+> Entering new AgentExecutor chain...
+'''json
+{
+    "action": "Wikipedia",
+    "action_input": "Bioaccumulation in fish"
+}
+'''
+Observation: Page: Bioaccumulation
+Summary: Bioaccumulation is the gradual accumulation of substances, such as pesticides or other chemicals, in an organism.  Bioaccumulation occurs when an organism absorbs a substance faster than it can be lost or eliminated by catabolism and excretion. Thus, the longer the biological half-life of a toxic substance, the greater the risk of chronic poisoning, even if environmental levels of the toxin are not very high. Bioaccumulation, for example in fish, can be predicted by models. Hypothesis for molecular size cutoff criteria for use as bioaccumulation potential indicators are not supported by data. Biotransformation can strongly modify bioaccumulation of chemicals in an organism.Toxicity induced by metals is associated with bioaccumulation and biomagnification. Storage or uptake of a metal faster than it is metabolized and excreted leads to the accumulation of that metal. The presence of various chemicals and harmful substances in the environment can be analyzed and assessed with a proper knowledge on bioaccumulation helping with chemical control and usage.An organism can take up chemicals by breathing, absorbing through skin or swallowing. When the concentration of a chemical is higher within the organism compared to its surroundings (air or water), it is referred to as bioconcentration. Biomagnification is another process related to bioaccumulation as the concentration of the chemical or metal increases as it moves up from one trophic level to another. Naturally, the process of bioaccumulation is necessary for an organism to grow and develop; however, accumulation of harmful substances can also occur.
+
+Page: Per- and polyfluoroalkyl substances
+Summary: Per- and polyfluoroalkyl substances (PFAS or PFASs) are a group of synthetic organofluorine chemical compounds that have multiple fluorine atoms attached to an alkyl chain. An early definition, from 2011, required that they contain at least one perfluoroalkyl moiety, –CnF2n+1–. Beginning in 2021, the Organisation for Economic Co-operation and Development (OECD) expanded their terminology, stating that "PFASs are defined as fluorinated substances that contain at least one fully fluorinated methyl or methylene carbon atom (without any H/Cl/Br/I atom attached to it), i.e., with a few noted exceptions, any chemical with at least a perfluorinated methyl group (–CF3) or a perfluorinated methylene group (–CF2–) is a PFAS."According to the OECD, at least 4,730 distinct PFASs that contain at least three perfluorinated carbon atoms are known. The United States Environmental Protection Agency's (EPA) toxicity database, DSSTox, lists 14,735 unique PFAS chemical compounds, while PubChem lists more than 6 million. The fluorinated surfactants or fluorosurfactants subgroup has a fluorinated "tail" and a hydrophilic "head" and are thus considered surfactants. These are more effective at reducing the surface tension of water than comparable hydrocarbon surfactants. They include the perfluorosulfonic acids, such as perfluorooctanesulfonic acid (PFOS), and the perfluorocarboxylic acids like perfluorooctanoic acid (PFOA).
+Many PFASs were used in the mid-20th century in products and on materials due to their enhanced water-resistant properties, such as within Teflon or aqueous film forming foam. Only since the start of the 21st century has the environmental impact and toxicity to human and mammalian life been studied in depth. PFOS, PFOA and other PFASs are commonly described as persistent organic pollutants or "forever chemicals" because they remain in the environment for long periods of time. Residues have been detected in humans and wildlife, prompting concern about impacts on health. According to the National Academies of Sciences, Engineering, and Medicine, PFAS exposure is linked to increased risk of dyslipidemia (abnormally high cholesterol), suboptimal antibody response, reduced infant and fetal growth, and higher rates of kidney cancer.Health concerns related to PF
+Thought:'''json
+{
+    "action": "Final Answer",
+    "action_input": "Bioaccumulation is the gradual accumulation of substances, such as pesticides or other chemicals, in an organism. It occurs when an organism absorbs a substance faster than it can be lost or eliminated by catabolism and excretion. Factors such as the organism's biological half-life of a toxic substance, biotransformation, toxicity induced by metals, bioconcentration, and biomagnification can affect bioaccumulation in fish."
+}
+'''
+
+> Finished chain.
+Executing complicated task: 3step [00:22,  7.81s/step]The end goal it to answer this: 'Salmon and tuna are both susceptible to bioaccumulation of pollutants, but the extent of bioaccumulation can vary based on factors such as species, habitat, and diet. However, in general, larger predatory fish such as tuna tend to accumulate higher levels of pollutants due to their position in the food chain. Therefore, tuna is generally considered to have a higher risk of bioaccumulation of pollutants compared to salmon.'.
+
+Here is the task planning:
+1. Research the bioaccumulation of pollutants in salmon and tuna. Done: 'The bioaccumulation of pollutants in salmon and tuna is a result of the accumulation of heavy metals and persistent organic pollutants in the aquatic systems, which are then absorbed by the fish and subsequently enter into the consumers of these contaminated fish. The concentrations of harmful legacy metals and persistent organic pollutants have been decreasing in animal and plant life over time in many locations. Additionally, studies have evaluated fish contamination with potentially toxic elements in various ecosystems.'
+2. Identify the factors that can affect the extent of bioaccumulation in fish. Done: 'Factors affecting bioaccumulation in fish include the organism's biological half-life of a toxic substance, biotransformation, toxicity induced by metals, bioconcentration, and biomagnification. Additionally, the presence of persistent, bioaccumulative, and toxic substances (PBTs) can contribute to high levels of bioaccumulation and biomagnification in fish. Methylmercury, for example, is a bioaccumulative environmental toxicant.'
+3. Compare the bioaccumulation levels in salmon and tuna based on species, habitat, and diet. Done: 'Bioaccumulation is the gradual accumulation of substances, such as pesticides or other chemicals, in an organism. It occurs when an organism absorbs a substance faster than it can be lost or eliminated by catabolism and excretion. Factors such as the organism's biological half-life of a toxic substance, biotransformation, toxicity induced by metals, bioconcentration, and biomagnification can affect bioaccumulation in fish.'
+4. Analyze the position of tuna and salmon in the food chain and its impact on bioaccumulation levels. TODO
+5. Draw a conclusion on the relative risk of bioaccumulation of pollutants in tuna compared to salmon. LATER
+
+Your current task is #4
+
+
+> Entering new AgentExecutor chain...
+'''json
+{
+    "action": "duckduckgo_search",
+    "action_input": "tuna and salmon position in the food chain and bioaccumulation levels"
+}
+'''
+Observation: This indicator focuses on trends for two types of toxic contaminant groups: legacy contaminants and contaminants of emerging concern (also called "emerging contaminants" or "chemicals of emerging concern"). It accumulates in the food chain and becomes concentrated at dangerous levels in larger and longer-lived predators such as bass, tuna, swordfish, and some sharks. Mercury can be methylated by certain bacteria in bottom sediments to form methylmercury, which is more toxic and bioavailable than other forms of mercury. 8156 Accesses 2 Citations Abstract Man-made persistent pollutants (such as PCBs, pesticides and trace metals) reach aquatic organisms through the food chains. Pollutants are ingested and assimilated by smaller organisms, and their concentration in tissues increases from prey to predators. Foods | Free Full-Text | Risk Assessment and Characterization in Tuna Species of the Canary Islands According to Their Metal Content Journals Foods Volume 12 Issue 7 10.3390/foods12071438 share Share announcement Help format_quote Cite question_answer Discuss in SciProfiles thumb_up Endorse textsms Comment settings Order Article Reprints Overview Contaminated media to which people might be exposed include air, water and sediment, soil and dust, food, aquatic biota, and consumer products. Aquatic biota (fish and shellfish) can become contaminated as a result of chemical input to water bodies and subsequent uptake and accumulation in muscle, fat, and other tissues.
+Thought:'''json
+{
+    "action": "Final Answer",
+    "action_input": "The bioaccumulation of pollutants in larger and longer-lived predators such as tuna is a result of the accumulation of toxic contaminants in the food chain, leading to dangerous levels of concentration in these fish. Mercury, for example, can be methylated by certain bacteria in bottom sediments to form methylmercury, which is more toxic and bioavailable than other forms of mercury. Man-made persistent pollutants such as PCBs, pesticides, and trace metals reach aquatic organisms through the food chains, with their concentration increasing from prey to predators."
+}
+'''
+
+> Finished chain.
+Executing complicated task: 4step [00:27,  6.96s/step]The end goal it to answer this: 'Salmon and tuna are both susceptible to bioaccumulation of pollutants, but the extent of bioaccumulation can vary based on factors such as species, habitat, and diet. However, in general, larger predatory fish such as tuna tend to accumulate higher levels of pollutants due to their position in the food chain. Therefore, tuna is generally considered to have a higher risk of bioaccumulation of pollutants compared to salmon.'.
+
+Here is the task planning:
+1. Research the bioaccumulation of pollutants in salmon and tuna. Done: 'The bioaccumulation of pollutants in salmon and tuna is a result of the accumulation of heavy metals and persistent organic pollutants in the aquatic systems, which are then absorbed by the fish and subsequently enter into the consumers of these contaminated fish. The concentrations of harmful legacy metals and persistent organic pollutants have been decreasing in animal and plant life over time in many locations. Additionally, studies have evaluated fish contamination with potentially toxic elements in various ecosystems.'
+2. Identify the factors that can affect the extent of bioaccumulation in fish. Done: 'Factors affecting bioaccumulation in fish include the organism's biological half-life of a toxic substance, biotransformation, toxicity induced by metals, bioconcentration, and biomagnification. Additionally, the presence of persistent, bioaccumulative, and toxic substances (PBTs) can contribute to high levels of bioaccumulation and biomagnification in fish. Methylmercury, for example, is a bioaccumulative environmental toxicant.'
+3. Compare the bioaccumulation levels in salmon and tuna based on species, habitat, and diet. Done: 'Bioaccumulation is the gradual accumulation of substances, such as pesticides or other chemicals, in an organism. It occurs when an organism absorbs a substance faster than it can be lost or eliminated by catabolism and excretion. Factors such as the organism's biological half-life of a toxic substance, biotransformation, toxicity induced by metals, bioconcentration, and biomagnification can affect bioaccumulation in fish.'
+4. Analyze the position of tuna and salmon in the food chain and its impact on bioaccumulation levels. Done: 'The bioaccumulation of pollutants in larger and longer-lived predators such as tuna is a result of the accumulation of toxic contaminants in the food chain, leading to dangerous levels of concentration in these fish. Mercury, for example, can be methylated by certain bacteria in bottom sediments to form methylmercury, which is more toxic and bioavailable than other forms of mercury. Man-made persistent pollutants such as PCBs, pesticides, and trace metals reach aquatic organisms through the food chains, with their concentration increasing from prey to predators.'
+5. Draw a conclusion on the relative risk of bioaccumulation of pollutants in tuna compared to salmon. TODO
+
+Your current task is #5
+
+
+> Entering new AgentExecutor chain...
+'''json
+{
+    "action": "Final Answer",
+    "action_input": "Based on the factors discussed, including the bioaccumulation of pollutants in larger predatory fish such as tuna due to their position in the food chain, it can be concluded that tuna generally has a higher risk of bioaccumulation of pollutants compared to salmon."
+}
+'''
+
+> Finished chain.
+Executing complicated task: 5step [00:28,  5.78s/step]
+
+
+> Entering new AgentExecutor chain...
+'''json
+{
+    "action": "Final Answer",
+    "action_input": "Based on the factors discussed, including the bioaccumulation of pollutants in larger predatory fish such as tuna due to their position in the food chain, it can be concluded that tuna generally has a higher risk of bioaccumulation of pollutants compared to salmon."
+}
+'''
+
+> Finished chain.
+
+Observation: Based on the factors discussed, including the bioaccumulation of pollutants in larger predatory fish such as tuna due to their position in the food chain, it can be concluded that tuna generally has a higher risk of bioaccumulation of pollutants compared to salmon.
+Thought:'''json
+{
+    "action": "Final Answer",
+    "action_input": "Tuna generally has a higher risk of bioaccumulation of pollutants compared to salmon, primarily due to its position in the food chain and its status as a larger predatory fish."
+}
+'''
+
+> Finished chain.
+
+
+> Entering new LLMChain chain...
+Prompt after formatting:
+
+Given a question and an answer, your task is to check the apparent validity of the answer.
+If the answer seems correct: answer 'VALID:'
+In any other situation: answer in the format 'INVALID:REASON' replacing REASON by a brief explanation.
+
+ALWAYS answer using the appropriate format.
+APPROPRIATE FORMAT: either 'VALID:' or 'INVALID:REASON'
+
+Example of valid output: 'VALID:'
+Example of invalid output: 'INVALID:Michelle Obama is not the Prime minister of the UK'
+
+Your turn now:
+
+Here's the answer:
+'''
+Tuna generally has a higher risk of bioaccumulation of pollutants compared to salmon, primarily due to its position in the food chain and its status as a larger predatory fish.
+'''
+
+Here's the question:
+'''
+ Use bigtask to tell me if salmon or tuna is the worst in terms of bioaccumulation of pollutants
+'''
+
+
+> Finished chain.
+Validity checker output: VALID:
+
+Token so far: 23885 or $0.024839999999999997
+Tuna generally has a higher risk of bioaccumulation of pollutants compared to salmon, primarily due to its position in the food chain and its status as a larger predatory fish.
+>
+
+```
+
+### Older demo
 Question was: `Use 'complicated' to look up the age of the UK prime minister and of Angela Merkel, multiply them together then divide by the age of the wife of Barrack Obama.`
 Total cost: 14901 tokens, so $0.015 using ChatGPT-3.5-turbo-1106
 
