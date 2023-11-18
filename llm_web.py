@@ -149,7 +149,7 @@ class WebSearch(llm.Model):
 
             @tool
             def complicated(question: str) -> str:
-                " If you have a task requiring multiple steps, use this tool and I'll give you the final answer."
+                "If you have a task requiring multiple steps, use this tool and I'll give you the final answer."
                 question = question.replace("The end goal it to answer this:", "").strip()
                 steps = subtasker.run(question).splitlines()
 
@@ -191,6 +191,7 @@ class WebSearch(llm.Model):
                     max_execution_time=DEFAULT_TIMEOUT,
                     max_iterations=DEFAULT_MAX_ITER
                     )
+
             additionnal_tools = [complicated]
         self.agent = initialize_agent(
                 self.tools + additionnal_tools,
