@@ -118,7 +118,6 @@ class WebSearch(llm.Model):
                     "llm-math",
                     ],
                 llm=chatgpt)
-        self.tools.append(userinput)
         # add tavily search to the tools if possible
         # try:
         #     # can only be loaded after the API key was set
@@ -194,7 +193,7 @@ class WebSearch(llm.Model):
                 return final_answer
 
             self.sub_agent = initialize_agent(
-                    self.tools,
+                    self.tools + [complicated],
                     chatgpt,
                     verbose=self.verbose,
                     agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,
@@ -204,9 +203,8 @@ class WebSearch(llm.Model):
                     max_iterations=DEFAULT_MAX_ITER
                     )
 
-            additionnal_tools = [complicated]
         self.agent = initialize_agent(
-                self.tools + additionnal_tools,
+                self.tools + [complicated, userinput],
                 chatgpt,
                 verbose=self.verbose,
                 agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,
