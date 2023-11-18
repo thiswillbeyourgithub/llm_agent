@@ -73,7 +73,17 @@ class WebSearch(llm.Model):
             temperature=DEFAULT_TEMP,
             timeout=DEFAULT_TIMEOUT,
             max_iter=DEFAULT_MAX_ITER,
+            *args,
+            **kwargs,
             ):
+        if args:
+            raise click.ClickException(
+                    f"Found extra args: {args}"
+            )
+        if kwargs:
+            raise click.ClickException(
+                    f"Found extra kwargs: {kwargs}"
+            )
         self.verbose = not quiet
 
         openai_key = llm.get_key(None, "openai", env_var="OPENAI_API_KEY")
