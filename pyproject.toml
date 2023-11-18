@@ -13,6 +13,7 @@ dependencies = [
     "duckduckgo-search==3.9.5",
     "wikipedia==1.4.0",
     "tqdm==4.64.0",
+    "metaphor-python==0.1.20",
     ]
 
 [projects.urls]

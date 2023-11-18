@@ -20,6 +20,7 @@ from langchain.callbacks import get_openai_callback
 from langchain.tools import tool
 from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
+from metaphor_python import Metaphor
 
 memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
 sub_memory = ConversationBufferWindowMemory(memory_key="chat_history", return_messages=True, k=2)
@@ -107,6 +108,11 @@ class WebSearch(llm.Model):
             print("No Tavily API key given, will only use duckduckgo for search.")
         os.environ["TAVILY_API_KEY"] = tavily_key
 
+        metaphor_key = llm.get_key(None, "metaphor", env_var="METAPHOR_API_KEY")
+        if not metaphor_key:
+            print("No Metaphor API key given, will not use this search engine.")
+        os.environ["METAPHOR_API_KEY"] = metaphor_key
+
         chatgpt = ChatOpenAI(
                 model_name=openaimodel,
                 temperature=temperature,
@@ -121,12 +127,27 @@ class WebSearch(llm.Model):
                     "llm-math",
                     ],
                 llm=chatgpt)
+
         # add tavily search to the tools if possible
         try:
             # can only be loaded after the API key was set
             tavily_search = TavilySearchAPIWrapper()
             tavily_tool = TavilySearchResults(api_wrapper=tavily_search)
             self.tools.append(tavily_tool)
+        except Exception:
+            pass
+
+        # add metaphor only if available
+        try:
+            mtph = Metaphor(api_key=os.environ["METAPHOR_API_KEY"])
+            @tool
+            def mtph_search(query: str) -> str:
+                """Advanced search using Metaphor. Use for advanced topics or
+                if the user asks for it."""
+                res = mtph.search(query, use_autoprompt=True, num_results=5)
+                content = mtph.get_contents(res)
+                return content
+            self.tools.append(mtph_search)
         except Exception:
             pass
 
