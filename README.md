@@ -3,7 +3,7 @@ Plugin for [llm](https://llm.datasette.io/) by the great [simonw](https://simonw
 
 ## Note
 * to install: `llm install llm-web`
-* to run: `llm chat -m web_search`
+* to run: `llm chat -m web`
 * Very early stage, done mostly while procrastinating work. Will improve a lot.
 
 ## TODO
