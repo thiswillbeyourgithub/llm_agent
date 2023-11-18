@@ -1,3 +1,4 @@
+import time
 from tqdm import tqdm
 from textwrap import dedent
 import json
@@ -182,7 +183,13 @@ class WebSearch(llm.Model):
                     stepprompt += f"\n\nYour current task is '{step}'"
                     print(stepprompt)
 
-                    intermediate_answer = self.sub_agent.run(stepprompt)
+                    try:
+                        intermediate_answer = self.sub_agent.run(stepprompt)
+                    except Exception as err:
+                        print(f"Error {err}, retrying after 2s")
+                        time.sleep(2)
+                        intermediate_answer = self.sub_agent.run(stepprompt)
+
                     answers.append(intermediate_answer)
 
                 prompt = header
