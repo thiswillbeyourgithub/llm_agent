@@ -131,7 +131,7 @@ class WebSearch(llm.Model):
 
         if self.tasks:
             template = dedent("""
-            At the end, I want to answer the question '{question}'. Your task is to generate up to 10 intermediate steps needed to answer that question. Don't create steps that are too vague or that would need to be broken down themselves.
+            At the end, I want to answer the question '{question}'. Your task is to generate a few (up to 10) intermediate steps needed to answer that question. Don't create steps that are too vague or that would need to be broken down themselves.
             If the question is already phrased as a series of steps, just rewrite into the appropriate format.
             Use your tools to answer the question.
 
