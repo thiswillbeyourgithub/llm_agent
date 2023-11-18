@@ -167,9 +167,9 @@ class WebSearch(llm.Model):
                 steps = subtasker.run(question).splitlines()
 
                 header = f"The end goal it to answer this: '{question}'.\n\n"
-                header += "Here is the step planning:"
+                header += "Here is the task planning:"
                 for i, step in enumerate(steps):
-                    step = f"\n{i+1}. {step}. Answer: 'STEPANSWER'"
+                    step = f"\n{i+1}. {step}. Done: 'STEPANSWER'"
                     header += step
 
                 answers = []
@@ -177,9 +177,10 @@ class WebSearch(llm.Model):
                     stepprompt = header
                     for ans in answers:
                         stepprompt = stepprompt.replace("STEPANSWER", ans, 1)
-                    stepprompt = stepprompt.replace(" Answer: 'STEPANSWER'", "").strip()
+                    stepprompt = stepprompt.replace("Done: 'STEPANSWER'", "TODO", 1).strip()
+                    stepprompt = stepprompt.replace("Done: 'STEPANSWER'", "LATER").strip()
 
-                    stepprompt += f"\n\nYour current task is '{step}'"
+                    stepprompt += f"\n\nYour current task is #{i+1}"
                     print(stepprompt)
 
                     try:
