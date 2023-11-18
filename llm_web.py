@@ -292,10 +292,11 @@ class WebSearch(llm.Model):
             if state == "INVALID":
                 new_answer = self.agent.run(
                         f"Try again another way because your answer seems invalid: {reason}")
-                # recursive call:
-                # return self._validate_answer(question, new_answer, depth+1)
-                # not recursive:
-                return new_answer
+                if depth >= 1:
+                    return new_answer
+                else:
+                    # recursive call:
+                    return self._validate_answer(question, new_answer, depth+1)
             else:
                 return answer
         except Exception as err:
