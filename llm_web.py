@@ -14,6 +14,7 @@ from langchain.chat_models import ChatOpenAI
 from langchain.utilities.tavily_search import TavilySearchAPIWrapper
 from langchain.tools.tavily_search import TavilySearchResults
 from langchain.memory import ConversationBufferMemory
+from langchain.memory import ConversationBufferWindowMemory
 from langchain.agents import load_tools
 from langchain.callbacks import get_openai_callback
 from langchain.tools import tool
@@ -21,7 +22,7 @@ from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 
 memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
-sub_memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+sub_memory = ConversationBufferWindowMemory(memory_key="chat_history", return_messages=True, k=5)
 
 DEFAULT_MODEL = "gpt-3.5-turbo-1106"
 DEFAULT_TEMP = 0
