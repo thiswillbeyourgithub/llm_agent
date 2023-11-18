@@ -119,13 +119,14 @@ class WebSearch(llm.Model):
                     ],
                 llm=chatgpt)
         self.tools.append(userinput)
-        try:
-            # can only be loaded after the API key was set
-            tavily_search = TavilySearchAPIWrapper()
-            tavily_tool = TavilySearchResults(api_wrapper=tavily_search)
-            self.tools.append(tavily_tool)
-        except Exception:
-            pass
+        # add tavily search to the tools if possible
+        # try:
+        #     # can only be loaded after the API key was set
+        #     tavily_search = TavilySearchAPIWrapper()
+        #     tavily_tool = TavilySearchResults(api_wrapper=tavily_search)
+        #     self.tools.append(tavily_tool)
+        # except Exception:
+        #     pass
 
         if self.tasks:
             template = dedent("""
