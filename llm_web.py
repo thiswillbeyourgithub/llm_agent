@@ -198,7 +198,13 @@ class WebSearch(llm.Model):
                 for ans in answers:
                     prompt = prompt.replace("STEPANSWER", ans, 1)
                 prompt += "\n\nNow please answer the initial question."
-                final_answer = self.sub_agent.run(prompt)
+                answers.append(self.sub_agent.run(prompt))
+
+                final_answer = f"I split the question into intermediate steps then tried to reason step by step.\nSteps:\n"
+                for i, step in enumerate(steps):
+                    step = f"\n{i+1}. {step}. Answer: '{answers[i]}'"
+                    final_answer += step
+                final_answer += f"\nThe final answer is: '{answers[-1]}'"
 
                 return final_answer
 
