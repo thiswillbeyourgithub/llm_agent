@@ -35,7 +35,7 @@ def register_models(register):
     register(WebSearch())
 
 class WebSearch(llm.Model):
-    VERSION = 0.4
+    VERSION = 0.5
     model_id = "web"
     can_stream = False
 
