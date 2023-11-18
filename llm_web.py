@@ -20,6 +20,7 @@ from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 
 memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+sub_memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
 
 DEFAULT_MODEL = "gpt-3.5-turbo-1106"
 DEFAULT_TEMP = 0
@@ -197,7 +198,7 @@ class WebSearch(llm.Model):
                     chatgpt,
                     verbose=self.verbose,
                     agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,
-                    memory=memory,
+                    memory=sub_memory,
                     handle_parsing_errors=True,
                     max_execution_time=DEFAULT_TIMEOUT,
                     max_iterations=DEFAULT_MAX_ITER
