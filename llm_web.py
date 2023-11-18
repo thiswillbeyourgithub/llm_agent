@@ -168,7 +168,6 @@ class WebSearch(llm.Model):
 
                 header = f"The end goal it to answer this: '{question}'.\n\n"
                 header += "Here is the step planning:"
-                print("Steps:")
                 for i, step in enumerate(steps):
                     step = f"\n{i+1}. {step}. Answer: 'STEPANSWER'"
                     header += step
@@ -178,7 +177,7 @@ class WebSearch(llm.Model):
                     stepprompt = header
                     for ans in answers:
                         stepprompt = stepprompt.replace("STEPANSWER", ans, 1)
-                    stepprompt = stepprompt.replace(" Answer: STEPANSWER", "").strip()
+                    stepprompt = stepprompt.replace(" Answer: 'STEPANSWER'", "").strip()
 
                     stepprompt += f"\n\nYour current task is '{step}'"
                     print(stepprompt)
