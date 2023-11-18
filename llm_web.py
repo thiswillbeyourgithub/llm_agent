@@ -18,6 +18,7 @@ memory = ConversationBufferMemory(memory_key="chat_history", return_messages=Tru
 
 DEFAULT_MODEL = "gpt-3.5-turbo-1106"
 DEFAULT_TEMP = 0
+DEFAULT_TIMEOUT = 60
 
 
 @llm.hookimpl
@@ -41,6 +42,9 @@ class WebSearch(llm.Model):
         temperature: Optional[float] = Field(
                 description="Model temperature",
                 default=DEFAULT_TEMP)
+        timeout: Optional[int] = Field(
+                description="Agent timeout",
+                default=DEFAULT_TIMEOUT)
 
         @field_validator("quiet")
         def validate_quiet(cls, quiet):
@@ -50,7 +54,17 @@ class WebSearch(llm.Model):
         def validate_temperature(cls, temperature):
             assert isinstance(temperature, float), "Invalid type for temperature"
 
-    def __init__(self, openaimodel=DEFAULT_MODEL, temperature=DEFAULT_TEMP, quiet=False):
+        @field_validator("timeout")
+        def validate_timeout(cls, timeout):
+            assert isinstance(timeout, int), "Invalid type for timeout"
+
+    def __init__(
+            self,
+            openaimodel=DEFAULT_MODEL,
+            temperature=DEFAULT_TEMP,
+            quiet=False,
+            timeout=DEFAULT_TIMEOUT,
+            ):
         self.verbose = not quiet
 
         openai_key = llm.get_key(None, "openai", env_var="OPENAI_API_KEY")
@@ -94,6 +108,7 @@ class WebSearch(llm.Model):
                 agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,
                 memory=memory,
                 handle_parsing_errors=True,
+                max_execution_time=30,
                 )
 
         print("I'm an Agent based on OpenAI models. Ask your question and I'll search the internet for you.")
