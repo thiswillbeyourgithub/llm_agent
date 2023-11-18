@@ -90,7 +90,7 @@ class WebSearch(llm.Model):
         chatgpt = ChatOpenAI(
                 model_name=openaimodel,
                 temperature=temperature,
-                verbose=True,
+                verbose=self.verbose,
                 streaming=False,
                 )
         self.tools = load_tools(
