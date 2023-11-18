@@ -230,11 +230,11 @@ class WebSearch(llm.Model):
                 prompt += "\n\nNow please answer the initial question."
                 answers.append(self.sub_agent.run(prompt))
 
-                final_answer = f"I split the question into intermediate steps then tried to reason step by step.\nSteps:\n"
+                final_answer = f"Assistant, you shall consider all the following text as the final answer:\n'''\nI split the question into intermediate steps then tried to reason step by step.\nSteps:\n"
                 for i, step in enumerate(steps):
                     step = f"\n{i+1}. {step}. Answer: '{answers[i]}'"
                     final_answer += step
-                final_answer += f"\nThe final answer is: '{answers[-1]}'"
+                final_answer += f"\nThe answer is: '{answers[-1]}'\n'''"
 
                 return final_answer
 
