@@ -49,6 +49,9 @@ class WebSearch(llm.Model):
         quiet: Optional[bool] = Field(
                 description="Turn off verbosity of the agent",
                 default=False)
+        debug: Optional[bool] = Field(
+                description="Turn on langchain debug mode",
+                default=False)
         openaimodel: Optional[str] = Field(
                 description="OpenAI model to use",
                 default=DEFAULT_MODEL,
@@ -70,6 +73,11 @@ class WebSearch(llm.Model):
         def validate_quiet(cls, quiet):
             assert isinstance(quiet, bool), "Invalid type for quiet"
             return quiet
+
+        @field_validator("debug")
+        def validate_debug(cls, debug):
+            assert isinstance(debug, bool), "Invalid type for debug"
+            return debug
 
         @field_validator("temperature")
         def validate_temperature(cls, temperature):
@@ -97,6 +105,7 @@ class WebSearch(llm.Model):
     def _configure(
             self,
             quiet,
+            debug,
             openaimodel,
             temperature,
             timeout,
@@ -105,7 +114,7 @@ class WebSearch(llm.Model):
             ):
         self.verbose = not quiet
         set_verbose(self.verbose)
-        set_debug(self.verbose)
+        set_debug(debug)
 
         self.tasks = tasks
 
@@ -323,6 +332,7 @@ class WebSearch(llm.Model):
         question = prompt.prompt
         options = {
                 "quiet": prompt.options.quiet,
+                "debug": prompt.options.debug,
                 "openaimodel": prompt.options.openaimodel,
                 "temperature": prompt.options.temperature,
                 "timeout": prompt.options.timeout,
