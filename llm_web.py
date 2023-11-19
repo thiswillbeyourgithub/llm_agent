@@ -69,22 +69,27 @@ class WebSearch(llm.Model):
         @field_validator("quiet")
         def validate_quiet(cls, quiet):
             assert isinstance(quiet, bool), "Invalid type for quiet"
+            return quiet
 
         @field_validator("temperature")
         def validate_temperature(cls, temperature):
             assert isinstance(temperature, float), "Invalid type for temperature"
+            return temperature
 
         @field_validator("timeout")
         def validate_timeout(cls, timeout):
             assert isinstance(timeout, int), "Invalid type for timeout"
+            return timeout
 
         @field_validator("max_iter")
         def validate_max_iter(cls, max_iter):
             assert isinstance(max_iter, int), "Invalid type for max_iter"
+            return max_iter
 
         @field_validator("tasks")
         def validate_tasks(cls, tasks):
             assert isinstance(tasks, bool), "Invalid type for tasks"
+            return tasks
 
     def __init__(self):
         self.previous_options = json.dumps({})
