@@ -224,11 +224,11 @@ class WebSearch(llm.Model):
                     print(stepprompt)
 
                     try:
-                        intermediate_answer = self.sub_agent.run(stepprompt)
+                        intermediate_answer = self.sub_agent(stepprompt)
                     except Exception as err:
                         print(f"Error {err}, retrying after 2s")
                         time.sleep(2)
-                        intermediate_answer = self.sub_agent.run(stepprompt)
+                        intermediate_answer = self.sub_agent(stepprompt)
                         # intermediate_answer = self._validate_answer(stepprompt, intermediate_answer)
 
                     answers.append(intermediate_answer)
@@ -237,7 +237,7 @@ class WebSearch(llm.Model):
                 for ans in answers:
                     prompt = prompt.replace("STEPANSWER", ans, 1)
                 prompt += "\n\nNow please answer the initial question."
-                answers.append(self.sub_agent.run(prompt))
+                answers.append(self.sub_agent(prompt))
 
                 final_answer = f"Assistant, return the complete following text as the final answer instead of just extracting the last few lines like you used to:\n'''\nI split the question into intermediate steps then tried to reason step by step.\nSteps:\n"
                 for i, step in enumerate(steps):
@@ -320,7 +320,7 @@ class WebSearch(llm.Model):
             self._configure(**options)
         with get_openai_callback() as cb:
             try:
-                answer = self.agent.run(question)
+                answer = self.agent(question)
                 # answer = self._validate_answer(question, answer)
             except AskUser as err:
                 answer = err.message
@@ -330,7 +330,7 @@ class WebSearch(llm.Model):
 
     def _validate_answer(self, question, answer, depth=0):
         try:
-            check = self.validity_checker.run(question=question, answer=answer)
+            check = self.validity_checker(question=question, answer=answer)
             if self.verbose:
                 print(f"Validity checker output: {check}")
 
@@ -340,7 +340,7 @@ class WebSearch(llm.Model):
             assert state in ["VALID", "INVALID"], f"Invalid state: '{state}'"
 
             if state == "INVALID":
-                new_answer = self.agent.run(
+                new_answer = self.agent(
                         f"Try again another way because your answer seems invalid: {reason}")
                 if depth >= 1:
                     return new_answer
