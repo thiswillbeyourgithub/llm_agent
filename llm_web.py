@@ -204,7 +204,7 @@ class WebSearch(llm.Model):
                 treat the whole output of this tool as an answer instead of
                 extracting the answer from the output yourself."""
                 question = question.replace("The end goal it to answer this:", "").strip()
-                steps = subtasker.run(question).splitlines()
+                steps = subtasker(question).splitlines()
 
                 header = f"The end goal it to answer this: '{question}'.\n\n"
                 header += "Here is the task planning:"
