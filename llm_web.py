@@ -256,7 +256,7 @@ class WebSearch(llm.Model):
                     memory=sub_memory,
                     handle_parsing_errors=True,
                     max_execution_time=DEFAULT_TIMEOUT,
-                    max_iterations=DEFAULT_MAX_ITER
+                    max_iterations=DEFAULT_MAX_ITER,
                     return_intermediate_steps=True,
                     )
 
@@ -302,7 +302,7 @@ class WebSearch(llm.Model):
                 memory=memory,
                 handle_parsing_errors=True,
                 max_execution_time=DEFAULT_TIMEOUT,
-                max_iterations=DEFAULT_MAX_ITER
+                max_iterations=DEFAULT_MAX_ITER,
                 return_intermediate_steps=True,
                 )
 
