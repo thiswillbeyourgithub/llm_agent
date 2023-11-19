@@ -134,6 +134,7 @@ class WebSearch(llm.Model):
                     "llm-math",
                     "arxiv",
                     "python-repl",
+                    "requests_get",
                     ],
                 llm=chatgpt)
 
