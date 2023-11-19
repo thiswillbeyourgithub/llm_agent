@@ -196,7 +196,9 @@ class WebSearch(llm.Model):
             def BigTask(question: str) -> str:
                 """If you have a task requiring multiple steps, use this tool.
                 If the task is directly from the user: give my his
-                exact instructions without any reformulation."""
+                exact instructions without any reformulation. You must return
+                treat the whole output of this tool as an answer instead of
+                extracting the answer from the output yourself."""
                 question = question.replace("The end goal it to answer this:", "").strip()
                 steps = subtasker.run(question).splitlines()
 
@@ -233,7 +235,7 @@ class WebSearch(llm.Model):
                 prompt += "\n\nNow please answer the initial question."
                 answers.append(self.sub_agent.run(prompt))
 
-                final_answer = f"Assistant, you shall consider all the following text as the final answer:\n'''\nI split the question into intermediate steps then tried to reason step by step.\nSteps:\n"
+                final_answer = f"Assistant, return the complete following text as the final answer instead of just extracting the last few lines like you used to:\n'''\nI split the question into intermediate steps then tried to reason step by step.\nSteps:\n"
                 for i, step in enumerate(steps):
                     step = f"\n{i+1}. {step}. Answer: '{answers[i]}'"
                     final_answer += step
