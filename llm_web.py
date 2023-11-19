@@ -9,6 +9,7 @@ import os
 from typing import Optional
 from pydantic import field_validator, Field
 
+from langchain.globals import set_verbose, set_debug
 from langchain.agents import load_tools
 from langchain.agents.initialize import initialize_agent
 from langchain.agents.agent_types import AgentType
@@ -97,6 +98,9 @@ class WebSearch(llm.Model):
             tasks,
             ):
         self.verbose = not quiet
+        set_verbose(self.verbose)
+        set_debug(self.verbose)
+
         self.tasks = tasks
 
         openai_key = llm.get_key(None, "openai", env_var="OPENAI_API_KEY")
