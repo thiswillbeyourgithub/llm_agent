@@ -303,7 +303,7 @@ class WebSearch(llm.Model):
         )
 
         self.agent = initialize_agent(
-                self.tools + [BigTask, userinput],
+                self.tools + [BigTask, userinput],  # notably: userinput is not available to the sub_agent currently
                 chatgpt,
                 verbose=self.verbose,
                 agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,
