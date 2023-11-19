@@ -253,6 +253,7 @@ class WebSearch(llm.Model):
                     handle_parsing_errors=True,
                     max_execution_time=DEFAULT_TIMEOUT,
                     max_iterations=DEFAULT_MAX_ITER
+                    return_intermediate_steps=True,
                     )
 
         template = dedent("""
@@ -298,6 +299,7 @@ class WebSearch(llm.Model):
                 handle_parsing_errors=True,
                 max_execution_time=DEFAULT_TIMEOUT,
                 max_iterations=DEFAULT_MAX_ITER
+                return_intermediate_steps=True,
                 )
 
     def execute(self, prompt, stream, response, conversation):
