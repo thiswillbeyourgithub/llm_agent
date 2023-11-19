@@ -337,7 +337,8 @@ class WebSearch(llm.Model):
             except AskUser as err:
                 answerdict = {"output": err.mlssage, "intermediate_steps": []}
 
-            print(f"\nToken so far: {cb.total_tokens} or ${cb.total_cost}")
+            if self.verbose:
+                print(f"\nToken so far: {cb.total_tokens} or ${cb.total_cost}")
         if answerdict["intermediate_steps"]:
             full_answer = "Intermediate steps:\n"
             for i, s in enumerate(answerdict["intermediate_steps"]):
