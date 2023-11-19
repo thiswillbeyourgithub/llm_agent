@@ -322,12 +322,12 @@ class WebSearch(llm.Model):
     def execute(self, prompt, stream, response, conversation):
         question = prompt.prompt
         options = {
-                "quiet": prompt.options.quiet or False,
-                "openaimodel": prompt.options.openaimodel or DEFAULT_MODEL,
-                "temperature": prompt.options.temperature or DEFAULT_TEMP,
-                "timeout": prompt.options.timeout or DEFAULT_TIMEOUT,
-                "max_iter": prompt.options.max_iter or DEFAULT_MAX_ITER,
-                "tasks": prompt.options.tasks or DEFAULT_TASKS,
+                "quiet": prompt.options.quiet,
+                "openaimodel": prompt.options.openaimodel,
+                "temperature": prompt.options.temperature,
+                "timeout": prompt.options.timeout,
+                "max_iter": prompt.options.max_iter,
+                "tasks": prompt.options.tasks,
                 }
         if json.dumps(options) != json.dumps(self.previous_options):
             self._configure(**options)
