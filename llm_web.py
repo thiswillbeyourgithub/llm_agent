@@ -133,7 +133,7 @@ class WebSearch(llm.Model):
                     "wikipedia",
                     "llm-math",
                     "arxiv",
-                    "python-repl",
+                    "python_repl",
                     "requests_get",
                     ],
                 llm=chatgpt)
