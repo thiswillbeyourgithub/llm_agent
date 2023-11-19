@@ -25,8 +25,8 @@ from langchain.utilities.tavily_search import TavilySearchAPIWrapper
 
 from metaphor_python import Metaphor
 
-memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
-sub_memory = ConversationBufferWindowMemory(memory_key="chat_history", return_messages=True, k=2)
+memory = ConversationBufferMemory(output_key="output", memory_key="chat_history", return_messages=True)
+sub_memory = ConversationBufferWindowMemory(output_key="output", memory_key="chat_history", return_messages=True, k=2)
 
 DEFAULT_MODEL = "gpt-3.5-turbo-1106"
 DEFAULT_TEMP = 0
@@ -211,6 +211,7 @@ class WebSearch(llm.Model):
                     header += step
 
                 answers = []
+                intermediate_stepanswers = []
                 for i, step in tqdm(enumerate(steps), desc="Executing complicated task", unit="step"):
                     stepprompt = header
                     for ans in answers:
@@ -222,20 +223,23 @@ class WebSearch(llm.Model):
                     print(stepprompt)
 
                     try:
-                        intermediate_answer = self.sub_agent(stepprompt)
+                        intermediate_answer, intermediate_substeps = self.sub_agent(stepprompt)
                     except Exception as err:
                         print(f"Error {err}, retrying after 2s")
                         time.sleep(2)
-                        intermediate_answer = self.sub_agent(stepprompt)
+                        intermediate_answer, intermediate_substeps = self.sub_agent(stepprompt)
                         # intermediate_answer = self._validate_answer(stepprompt, intermediate_answer)
 
                     answers.append(intermediate_answer)
+                    intermediate_stepanswers.append(intermediate_substeps)
 
                 prompt = header
                 for ans in answers:
                     prompt = prompt.replace("STEPANSWER", ans, 1)
                 prompt += "\n\nNow please answer the initial question."
-                answers.append(self.sub_agent(prompt))
+                answer, intermediate_substeps = self.sub_agent(prompt)
+                answers.append(answer)
+                intermediate_stepanswers.append(intermediate_substeps)
 
                 final_answer = f"Assistant, return the complete following text as the final answer instead of just extracting the last few lines like you used to:\n'''\nI split the question into intermediate steps then tried to reason step by step.\nSteps:\n"
                 for i, step in enumerate(steps):
@@ -318,13 +322,19 @@ class WebSearch(llm.Model):
             self._configure(**options)
         with get_openai_callback() as cb:
             try:
-                answer = self.agent(question)
-                # answer = self._validate_answer(question, answer)
+                answerdict = self.agent(question)
             except AskUser as err:
-                answer = err.message
+                answerdict = {"output": err.mlssage, "intermediate_steps": []}
 
             print(f"\nToken so far: {cb.total_tokens} or ${cb.total_cost}")
-        return answer
+        if answerdict["intermediate_steps"]:
+            full_answer = "Intermediate steps:\n"
+            for i, s in enumerate(answerdict["intermediate_steps"]):
+                full_answer += f"* {i+1}: {s}\n"
+            full_answer += f"\n-> {answerdict['output']}"
+            return full_answer
+        else:
+            return answerdict["output"]
 
     def _validate_answer(self, question, answer, depth=0):
         try:
