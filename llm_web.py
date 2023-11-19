@@ -345,7 +345,7 @@ class WebSearch(llm.Model):
             try:
                 answerdict = self.agent(question)
             except AskUser as err:
-                answerdict = {"output": err.mlssage, "intermediate_steps": []}
+                answerdict = {"output": err.message, "intermediate_steps": []}
 
             if self.verbose:
                 print(f"\nToken so far: {cb.total_tokens} or ${cb.total_cost}")
