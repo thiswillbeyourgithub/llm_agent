@@ -328,6 +328,9 @@ class WebSearch(llm.Model):
                 return_intermediate_steps=True,
                 )
 
+        if self.verbose:
+            print(f"(Tools as the agent's disposal: {', '.join([t.name for t in self.tools])})")
+
     def execute(self, prompt, stream, response, conversation):
         question = prompt.prompt
         options = {
