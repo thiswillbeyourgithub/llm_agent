@@ -14,7 +14,7 @@ dependencies = [
     "wikipedia==1.4.0",
     "tqdm==4.66.1",
     "metaphor-python==0.1.20",
-    "xml-to-dict==0.13.0",
+    "xmltodict==0.13.0",
     "arxiv==2.0.0",
     ]
 
