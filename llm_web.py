@@ -132,6 +132,7 @@ class WebSearch(llm.Model):
                     "ddg-search",
                     "wikipedia",
                     "llm-math",
+                    "arxiv",
                     ],
                 llm=chatgpt)
 
