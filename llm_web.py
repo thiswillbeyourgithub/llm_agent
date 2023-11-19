@@ -20,6 +20,7 @@ from langchain.memory import ConversationBufferMemory
 from langchain.memory import ConversationBufferWindowMemory
 from langchain.callbacks import get_openai_callback
 from langchain.tools import tool
+from langchain.tools import PubmedQueryRun
 from langchain.tools.tavily_search import TavilySearchResults
 from langchain.utilities.tavily_search import TavilySearchAPIWrapper
 
@@ -133,6 +134,8 @@ class WebSearch(llm.Model):
                     "llm-math",
                     ],
                 llm=chatgpt)
+
+        self.tools.append(PubmedQueryRun())
 
         # add tavily search to the tools if possible
         try:
