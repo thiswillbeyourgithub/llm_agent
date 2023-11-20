@@ -187,15 +187,18 @@ class WebSearch(llm.Model):
             with open(self.user_memories.absolute(), "r") as file:
                 memories = json.load(file)
                 assert isinstance(memories, list), "Memories is not a list"
+                messages = []
                 for mem in memories:
                     assert isinstance(mem, dict), "Invalid type of memory"
                     assert "timestamp" in mem, "Memory missing timestamp key"
                     assert "message" in mem, "Memory missing message key"
                     mess = mem["message"]
                     assert mess, "Empty message in memory"
-                    memory.chat_memory.add_user_message(mess)
-                    if self.verbose:
-                        print(f"Added memory '{mess}' from persistent memories.")
+                    messages.append(mess)
+                message = (f"Here are a few things you have to know:\n- " + "\n- ".join(messages)).strip()
+                if self.verbose:
+                    print(f"Loaded from memory: '{message}")
+                memory.chat_memory.add_user_message(message)
 
             @tool
             def memorize(memory: str) -> str:
