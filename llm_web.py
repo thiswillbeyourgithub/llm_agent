@@ -1,3 +1,4 @@
+from datetime import datetime
 from bs4 import BeautifulSoup
 import time
 from tqdm import tqdm
@@ -28,6 +29,8 @@ from metaphor_python import Metaphor
 
 memory = ConversationBufferMemory(output_key="output", memory_key="chat_history", return_messages=True)
 sub_memory = ConversationBufferWindowMemory(output_key="output", memory_key="chat_history", return_messages=True, k=2)
+
+memory.chat_memory.add_user_message(f"Today's date is {datetime.now()}.")
 
 DEFAULT_MODEL = "gpt-3.5-turbo-1106"
 DEFAULT_TEMP = 0
