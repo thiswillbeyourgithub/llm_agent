@@ -222,7 +222,7 @@ class WebSearch(llm.Model):
                 this tool. If the task is directly from the user: give
                 me his exact instructions without any reformulation."""
                 question = question.replace("The end goal it to answer this:", "").strip()
-                steps = subtasker(question).splitlines()
+                steps = subtasker(question)["steps"].splitlines()
 
                 header = f"The end goal it to answer this: '{question}'.\n\n"
                 header += "Here is the task planning:"
