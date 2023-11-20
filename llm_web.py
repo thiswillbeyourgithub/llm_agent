@@ -282,6 +282,9 @@ class WebSearch(llm.Model):
                     return_intermediate_steps=True,
                     )
 
+            # only add to the tools now so that sub_agent can't make recursive bigtask calls
+            self.tools.append(BigTask)
+
         template = dedent("""
         Given a question and an answer, your task is to check the apparent validity of the answer.
         If the answer seems correct: answer 'VALID:'
@@ -317,7 +320,7 @@ class WebSearch(llm.Model):
         )
 
         self.agent = initialize_agent(
-                self.tools + [BigTask, userinput],  # notably: userinput is not available to the sub_agent currently
+                self.tools + [userinput],  # notably: userinput is not available to the sub_agent currently
                 chatgpt,
                 verbose=self.verbose,
                 agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,
