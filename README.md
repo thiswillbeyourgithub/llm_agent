@@ -10,7 +10,7 @@ Plugin for [llm](https://llm.datasette.io/) by the great [simonw](https://simonw
 * Multiple search engines: duckduckgo, metaphor, tavily, wikipedia
 * BigTask tool: used to split a task into subtasks
 * Math tool: calculator included
-* Persistent memory: just ask the LLM to memorize something (for example "I want you to memorize that I'm a computer science engineer.")
+* Persistent memory: if you use the `user` argument, you can just ask the LLM to memorize something (for example "I want you to memorize that I'm a computer science engineer.")
 
 ## TODO
 * tell simonw
