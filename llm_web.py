@@ -148,7 +148,7 @@ class WebSearch(llm.Model):
                     "llm-math",
                     "arxiv",
                     # "python_repl",  # part of experimental langchain
-                    "requests_get",
+                    # "requests_get",
                     ],
                 llm=chatgpt)
 
