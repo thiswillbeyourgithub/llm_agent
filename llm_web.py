@@ -27,11 +27,6 @@ from langchain.utilities.tavily_search import TavilySearchAPIWrapper
 
 from metaphor_python import Metaphor
 
-memory = ConversationBufferMemory(output_key="output", memory_key="chat_history", return_messages=True)
-sub_memory = ConversationBufferWindowMemory(output_key="output", memory_key="chat_history", return_messages=True, k=2)
-
-memory.chat_memory.add_user_message(f"Today's date is {datetime.now()}.")
-
 DEFAULT_MODEL = "gpt-3.5-turbo-1106"
 DEFAULT_TEMP = 0
 DEFAULT_TIMEOUT = 120
@@ -71,6 +66,9 @@ class WebSearch(llm.Model):
         tasks: Optional[bool] = Field(
                 description="True to use subtasks",
                 default=DEFAULT_TASKS)
+        user: Optional[str] = Field(
+                description="Name of the user, used for persistent memory.",
+                default="John")
 
         @field_validator("quiet")
         def validate_quiet(cls, quiet):
@@ -102,6 +100,12 @@ class WebSearch(llm.Model):
             assert isinstance(tasks, bool), "Invalid type for tasks"
             return tasks
 
+        @field_validator("user")
+        def validate_user(cls, user):
+            assert isinstance(user, str), "Invalid type for user"
+            assert user, "Empty user"
+            return user
+
     def __init__(self):
         self.previous_options = json.dumps({})
 
@@ -114,6 +118,7 @@ class WebSearch(llm.Model):
             timeout,
             max_iter,
             tasks,
+            user,
             ):
         self.verbose = not quiet
         set_verbose(self.verbose)
@@ -144,6 +149,54 @@ class WebSearch(llm.Model):
                 streaming=False,
                 )
 
+        memory = ConversationBufferMemory(
+                output_key="output",
+                memory_key="chat_history",
+                return_messages=True)
+        sub_memory = ConversationBufferWindowMemory(
+                output_key="output",
+                memory_key="chat_history",
+                return_messages=True,
+                k=2)
+
+        memory.chat_memory.add_user_message(
+            f"My name is {user} and today's date is {datetime.now()}.")
+
+        # look for previous persisted memories
+        llm_web = llm.user_dir() / "web"
+        llm_web.mkdir(exist_ok=True)
+        self.user_memories = llm_web / f"{user}.json"
+        if not self.user_memories.exists():
+            with open(self.user_memories.absolute(), "w") as file:
+                json.dump([], file)
+        with open(self.user_memories.absolute(), "r") as file:
+            memories = json.load(file)
+            assert isinstance(memories, list), "Memories is not a list"
+            for mem in memories:
+                assert isinstance(mem, dict), "Invalid type of memory"
+                assert "timestamp" in mem, "Memory missing timestamp key"
+                assert "message" in mem, "Memory missing message key"
+                mess = mem["message"]
+                assert mess, "Empty message in memory"
+                memory.chat_memory.add_user_message(mess)
+                if self.verbose:
+                    print(f"Added memory '{mess}' from persistent memories.")
+
+        @tool
+        def memorize(memory: str) -> str:
+            """Use this ONLY if the user asks you to memorize an information
+            persistently. I'll then make sure to store it somewhere for future use
+            by you. Input must be the information the user wants you to memorize."""
+            with open(self.user_memories.absolute(), "r") as file:
+                memories = json.load(file)
+                memories += {
+                        "timestamp": int(time.time()),
+                        "message": memory,
+                        }
+            with open(self.user_memories.absolute(), "w") as file:
+                json.dump(memories, file)
+            return f"I added the memory '{memory}' to persistent memory."
+
         self.tools = load_tools(
                 [
                     "ddg-search",
@@ -155,6 +208,7 @@ class WebSearch(llm.Model):
                     ],
                 llm=chatgpt)
 
+        self.tools.append(memorize)
         self.tools.append(PubmedQueryRun())
 
         # add tavily search to the tools if possible
@@ -349,6 +403,7 @@ class WebSearch(llm.Model):
                 "timeout": prompt.options.timeout,
                 "max_iter": prompt.options.max_iter,
                 "tasks": prompt.options.tasks,
+                "user": prompt.options.user,
                 }
         if json.dumps(options) != json.dumps(self.previous_options):
             self._configure(**options)
