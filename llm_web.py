@@ -189,10 +189,10 @@ class WebSearch(llm.Model):
             by you. Input must be the information the user wants you to memorize."""
             with open(self.user_memories.absolute(), "r") as file:
                 memories = json.load(file)
-                memories += {
+                memories.append({
                         "timestamp": int(time.time()),
                         "message": memory,
-                        }
+                        })
             with open(self.user_memories.absolute(), "w") as file:
                 json.dump(memories, file)
             return f"I added the memory '{memory}' to persistent memory."
@@ -405,8 +405,10 @@ class WebSearch(llm.Model):
                 "tasks": prompt.options.tasks,
                 "user": prompt.options.user,
                 }
+
         if json.dumps(options) != json.dumps(self.previous_options):
             self._configure(**options)
+
         with get_openai_callback() as cb:
             try:
                 answerdict = self.agent(question)
