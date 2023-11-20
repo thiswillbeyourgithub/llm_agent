@@ -243,23 +243,23 @@ class WebSearch(llm.Model):
                     print(stepprompt)
 
                     try:
-                        intermediate_answer, intermediate_substeps = self.sub_agent(stepprompt)
+                        answerdict = self.sub_agent(stepprompt)
                     except Exception as err:
                         print(f"Error {err}, retrying after 2s")
                         time.sleep(2)
-                        intermediate_answer, intermediate_substeps = self.sub_agent(stepprompt)
+                        answerdict = self.sub_agent(stepprompt)
                         # intermediate_answer = self._validate_answer(stepprompt, intermediate_answer)
 
-                    answers.append(intermediate_answer)
-                    intermediate_stepanswers.append(intermediate_substeps)
+                    answers.append(answerdict["output"])
+                    intermediate_stepanswers.append(answerdict["intermediate_steps"])
 
                 prompt = header
                 for ans in answers:
                     prompt = prompt.replace("STEPANSWER", ans, 1)
                 prompt += "\n\nNow please answer the initial question."
-                answer, intermediate_substeps = self.sub_agent(prompt)
-                answers.append(answer)
-                intermediate_stepanswers.append(intermediate_substeps)
+                answerdict = self.sub_agent(prompt)
+                answers.append(answerdict["output"])
+                intermediate_stepanswers.append(answerdict["intermediate_steps"])
 
                 final_answer = f"Assistant, return the complete following text as the final answer instead of just extracting the last few lines like you used to:\n'''\nI split the question into intermediate steps then tried to reason step by step.\nSteps:\n"
                 for i, step in enumerate(steps):
