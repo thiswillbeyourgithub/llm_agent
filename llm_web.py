@@ -107,7 +107,7 @@ class WebSearch(llm.Model):
             return user
 
     def __init__(self):
-        self.previous_options = json.dumps({})
+        self.configured = False
 
     def _configure(
             self,
@@ -393,6 +393,8 @@ class WebSearch(llm.Model):
         if self.verbose:
             print(f"(Tools as the agent's disposal: {', '.join([t.name for t in self.tools])})")
 
+        self.configured = True
+
     def execute(self, prompt, stream, response, conversation):
         question = prompt.prompt
         options = {
@@ -406,7 +408,7 @@ class WebSearch(llm.Model):
                 "user": prompt.options.user,
                 }
 
-        if json.dumps(options) != json.dumps(self.previous_options):
+        if not self.configured:
             self._configure(**options)
 
         with get_openai_callback() as cb:
