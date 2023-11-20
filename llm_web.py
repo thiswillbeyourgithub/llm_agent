@@ -168,8 +168,8 @@ class WebSearch(llm.Model):
             mtph = Metaphor(api_key=os.environ["METAPHOR_API_KEY"])
             @tool
             def metaphor_search(query: str) -> str:
-                dedent("""Advanced search using Metaphor. Use for advanced
-                topics or if the user asks for it.""")
+                """Advanced search using Metaphor. Use for advanced
+                topics or if the user asks for it."""
                 res = mtph.search(query, use_autoprompt=False, num_results=5)
 
                 output = "Here's the result of the search:"
@@ -218,9 +218,9 @@ class WebSearch(llm.Model):
 
             @tool
             def BigTask(question: str) -> str:
-                dedent("""If you have a task requiring multiple steps, use
+                """If you have a task requiring multiple steps, use
                 this tool. If the task is directly from the user: give
-                me his exact instructions without any reformulation.""")
+                me his exact instructions without any reformulation."""
                 question = question.replace("The end goal it to answer this:", "").strip()
                 steps = subtasker(question).splitlines()
 
