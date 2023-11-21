@@ -348,7 +348,8 @@ class WebSearch(llm.Model):
             # only add to the tools now so that sub_agent can't make recursive bigtask calls
             self.tools += [BigTask]
 
-        self.tools += load_tools(["human"])
+        self.tools += load_tools(["human"])  # note that human tools is
+        # accessible to self.agent but not to self.sub_agent
 
         template = dedent("""
         Given a question and an answer, your task is to check the apparent validity of the answer.
@@ -385,7 +386,7 @@ class WebSearch(llm.Model):
         )
 
         self.agent = initialize_agent(
-                self.tools, # + [userinput],  # notably: userinput is not available to the sub_agent currently
+                self.tools,
                 chatgpt,
                 verbose=self.verbose,
                 agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,
@@ -418,10 +419,7 @@ class WebSearch(llm.Model):
             self._configure(**options)
 
         with get_openai_callback() as cb:
-            try:
-                answerdict = self.agent(question)
-            except AskUser as err:
-                answerdict = {"output": err.message, "intermediate_steps": []}
+            answerdict = self.agent(question)
 
             if self.verbose:
                 print(f"\nToken so far: {cb.total_tokens} or ${cb.total_cost}")
@@ -457,13 +455,3 @@ class WebSearch(llm.Model):
                 return answer
         except Exception as err:
             print(f"Error when checking validity: '{err}'")
-
-@tool
-def userinput(question: str) -> str:
-    "Talk with the user if no other tool is currently needed. Don't use it to ask question that could be answered using the search tools."
-    raise AskUser(question)
-
-
-class AskUser(Exception):
-    def __init__(self, message):
-        self.message = message
