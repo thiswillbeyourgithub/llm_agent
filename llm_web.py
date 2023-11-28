@@ -72,6 +72,12 @@ class WebSearch(llm.Model):
         user: Optional[str] = Field(
                 description="If a string, should be the name of the user and will be used for persistent memory.",
                 default=None)
+        tavily: Optional[bool] = Field(
+                description="If True, will use tavily for search if an api key is supplied.",
+                default=False)
+        metaphor: Optional[bool] = Field(
+                description="If True, will use metaphor for search if an api key is supplied.",
+                default=False)
 
         @field_validator("quiet")
         def validate_quiet(cls, quiet):
@@ -103,6 +109,16 @@ class WebSearch(llm.Model):
             assert isinstance(tasks, bool), "Invalid type for tasks"
             return tasks
 
+        @field_validator("tavily")
+        def validate_tavily(cls, tavily):
+            assert isinstance(tavily, bool), "Invalid type for tavily"
+            return tavily
+
+        @field_validator("metaphor")
+        def validate_metaphor(cls, metaphor):
+            assert isinstance(metaphor, bool), "Invalid type for metaphor"
+            return metaphor
+
     def __init__(self):
         self.configured = False
 
@@ -123,6 +139,8 @@ class WebSearch(llm.Model):
                     "max_iter": DEFAULT_MAX_ITER,
                     "tasks": DEFAULT_TASKS,
                     "user": None,
+                    "tavily": False,
+                    "metaphor": False,
                     }
             for arg in args.split("--option"):
                 arg = arg.strip()
@@ -156,6 +174,8 @@ class WebSearch(llm.Model):
             max_iter,
             tasks,
             user,
+            tavily,
+            metaphor,
             ):
         self.verbose = not quiet
         set_verbose(self.verbose)
@@ -252,40 +272,42 @@ class WebSearch(llm.Model):
             self.atools.append(memorize)
 
         # add tavily search to the tools if possible
-        tavily_key = llm.get_key(None, "tavily", env_var="TAVILY_API_KEY")
-        os.environ["TAVILY_API_KEY"] = tavily_key
-        if not tavily_key:
-            print("No Tavily API key given, will only use duckduckgo for search.")
-        else:
-            # can only be loaded after the API key was set
-            tavily_search = TavilySearchAPIWrapper()
-            tavily_tool = TavilySearchResults(api_wrapper=tavily_search)
-            self.atools.append(tavily_tool)
+        if tavily:
+            tavily_key = llm.get_key(None, "tavily", env_var="TAVILY_API_KEY")
+            os.environ["TAVILY_API_KEY"] = tavily_key
+            if not tavily_key:
+                print("No Tavily API key given, will only use duckduckgo for search.")
+            else:
+                # can only be loaded after the API key was set
+                tavily_search = TavilySearchAPIWrapper()
+                tavily_tool = TavilySearchResults(api_wrapper=tavily_search)
+                self.atools.append(tavily_tool)
 
         # add metaphor only if available
-        metaphor_key = llm.get_key(None, "metaphor", env_var="METAPHOR_API_KEY")
-        os.environ["METAPHOR_API_KEY"] = metaphor_key
-        if not metaphor_key:
-            print("No Metaphor API key given, will not use this search engine.")
-        else:
-            mtph = Metaphor(api_key=os.environ["METAPHOR_API_KEY"])
+        if metaphor:
+            metaphor_key = llm.get_key(None, "metaphor", env_var="METAPHOR_API_KEY")
+            os.environ["METAPHOR_API_KEY"] = metaphor_key
+            if not metaphor_key:
+                print("No Metaphor API key given, will not use this search engine.")
+            else:
+                mtph = Metaphor(api_key=os.environ["METAPHOR_API_KEY"])
 
-            @tool
-            def metaphor_search(query: str) -> str:
-                """Advanced search using Metaphor. Use for advanced
-                topics or if the user asks for it."""
-                res = mtph.search(query, use_autoprompt=False, num_results=5)
+                @tool
+                def metaphor_search(query: str) -> str:
+                    """Advanced search using Metaphor. Use for advanced
+                    topics or if the user asks for it."""
+                    res = mtph.search(query, use_autoprompt=False, num_results=5)
 
-                output = "Here's the result of the search:"
-                for result in res.get_contents().contents:
-                    html = result.extract
-                    url = result.url
-                    text = BeautifulSoup(html).get_text().strip()
-                    output += f"\n- {url} :\n'''\n{text}\n'''\n"
-                output = output.strip()
-                return output
+                    output = "Here's the result of the search:"
+                    for result in res.get_contents().contents:
+                        html = result.extract
+                        url = result.url
+                        text = BeautifulSoup(html).get_text().strip()
+                        output += f"\n- {url} :\n'''\n{text}\n'''\n"
+                    output = output.strip()
+                    return output
 
-            self.atools.append(metaphor_search)
+                self.atools.append(metaphor_search)
 
         # add browser toolkit
         self.browser = create_async_playwright_browser()
@@ -459,6 +481,8 @@ class WebSearch(llm.Model):
                 "max_iter": prompt.options.max_iter,
                 "tasks": prompt.options.tasks,
                 "user": prompt.options.user,
+                "tavily": prompt.options.tavily,
+                "metaphor": prompt.options.metaphor,
                 }
 
         if not self.configured:
