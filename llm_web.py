@@ -1,3 +1,4 @@
+import sys
 from datetime import datetime
 from bs4 import BeautifulSoup
 import time
@@ -102,6 +103,46 @@ class WebSearch(llm.Model):
 
     def __init__(self):
         self.configured = False
+
+        # if we qre certain that llm will use WebSearch then might as
+        # well initialize it directly instead of waiting the first message
+        if "web" not in sys.argv:
+            return
+        try:
+            args = " ".join(sys.argv[1:]).replace("-o", "--option")
+            while args and not args.startswith("--option"):
+                args = args[1:]
+            options = {
+                    "quiet": False,
+                    "debug": False,
+                    "openaimodel": DEFAULT_MODEL,
+                    "temperature": DEFAULT_TEMP,
+                    "timeout": DEFAULT_TIMEOUT,
+                    "max_iter": DEFAULT_MAX_ITER,
+                    "tasks": DEFAULT_TASKS,
+                    "user": None,
+                    }
+            for arg in args.split("--option"):
+                arg = arg.strip()
+                if not arg:
+                    continue
+                k, v = arg.split(" ")
+                assert k in options, f"missing {k} from options?"
+                if v.lower() == "false":
+                    v = False
+                elif v.lower() == "true":
+                    v = True
+                elif v.lower() == "none":
+                    v = None
+                elif v.isdigit():
+                    if "." in v:
+                        v = float(v)
+                    else:
+                        v = int(v)
+                options[k] = v
+            self._configure(**options)
+        except Exception as err:
+            print(f"Error when configuring early WebSearch: {err}")
 
     def _configure(
             self,
