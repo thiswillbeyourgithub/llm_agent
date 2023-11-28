@@ -16,6 +16,7 @@ from langchain.agents import load_tools
 from langchain.agents.initialize import initialize_agent
 from langchain.agents.agent_types import AgentType
 from langchain.agents.agent_toolkits import FileManagementToolkit
+from langchain.tools import ShellTool
 from langchain.agents.agent_toolkits import PlayWrightBrowserToolkit
 from langchain.tools.playwright.utils import create_sync_playwright_browser
 from langchain.chains import LLMChain
@@ -37,6 +38,7 @@ DEFAULT_TIMEOUT = 120
 DEFAULT_MAX_ITER = 100
 DEFAULT_TASKS = True
 DEFAULT_FILES = False
+DEFAULT_SHELL = False
 
 
 @llm.hookimpl
@@ -83,6 +85,9 @@ class Agent(llm.Model):
         files_tool: Optional[bool] = Field(
                 description="If True, will enable the file related tools. Be careful.",
                 default=DEFAULT_FILES)
+        shell_tool: Optional[bool] = Field(
+                description="If True, will enable the tool to use the shell. Be careful.",
+                default=DEFAULT_SHELL)
 
         @field_validator("quiet")
         def validate_quiet(cls, quiet):
@@ -129,6 +134,11 @@ class Agent(llm.Model):
             assert isinstance(files_tool, bool), "Invalid type for files_tool"
             return files_tool
 
+        @field_validator("shell_tool")
+        def validate_shell_tool(cls, shell_tool):
+            assert isinstance(shell_tool, bool), "Invalid type for shell_tool"
+            return shell_tool
+
     def __init__(self):
         self.configured = False
 
@@ -152,6 +162,7 @@ class Agent(llm.Model):
                     "tavily_tool": False,
                     "metaphor_tool": False,
                     "files_tool": DEFAULT_FILES,
+                    "shell_tool": DEFAULT_SHELL,
                     }
             for arg in args.split("--option"):
                 arg = arg.strip()
@@ -188,6 +199,7 @@ class Agent(llm.Model):
             tavily_tool,
             metaphor_tool,
             files_tool,
+            shell_tool,
             ):
         self.verbose = not quiet
         set_verbose(self.verbose)
@@ -237,6 +249,9 @@ class Agent(llm.Model):
                         ])
             self.atools += toolkit.get_tools()
 
+        if shell_tool:
+            self.atools += ShellTool()
+            self.satools += ShellTool()
 
         # init memories
         memory = ConversationBufferMemory(
@@ -508,6 +523,7 @@ class Agent(llm.Model):
                 "tavily_tool": prompt.options.tavily_tool,
                 "metaphor_tool": prompt.options.metaphor_tool,
                 "files_tool": prompt.options.files_tool,
+                "shell_tool": prompt.options.shell_tool,
                 }
 
         if not self.configured:
