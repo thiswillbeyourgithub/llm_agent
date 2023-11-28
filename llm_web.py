@@ -36,15 +36,16 @@ DEFAULT_TEMP = 0
 DEFAULT_TIMEOUT = 120
 DEFAULT_MAX_ITER = 100
 DEFAULT_TASKS = True
+DEFAULT_FILES = False
 
 
 @llm.hookimpl
 def register_models(register):
-    register(WebSearch())
+    register(Agent())
 
-class WebSearch(llm.Model):
+class Agent(llm.Model):
     VERSION = 0.8
-    model_id = "web"
+    model_id = "agent"
     can_stream = False
 
     class Options(llm.Options):
@@ -131,9 +132,9 @@ class WebSearch(llm.Model):
     def __init__(self):
         self.configured = False
 
-        # if we qre certain that llm will use WebSearch then might as
+        # if we qre certain that llm will use Agent then might as
         # well initialize it directly instead of waiting the first message
-        if "web" not in sys.argv:
+        if "agent" not in sys.argv:
             return
         try:
             args = " ".join(sys.argv[1:]).replace("-o", "--option")
@@ -172,7 +173,7 @@ class WebSearch(llm.Model):
                 options[k] = v
             self._configure(**options)
         except Exception as err:
-            print(f"Error when configuring early WebSearch: {err}")
+            print(f"Error when configuring early Agent: {err}")
 
     def _configure(
             self,
@@ -258,9 +259,9 @@ class WebSearch(llm.Model):
                 f"My name is {user} and today's date is {datetime.now()}.")
 
             # look for previous persisted memories
-            llm_web = llm.user_dir() / "web"
-            llm_web.mkdir(exist_ok=True)
-            self.user_memories = llm_web / f"{user}.json"
+            llm_agent = llm.user_dir() / "agent"
+            llm_agent.mkdir(exist_ok=True)
+            self.user_memories = llm_agent / f"{user}.json"
             if not self.user_memories.exists():
                 with open(self.user_memories.absolute(), "w") as file:
                     json.dump([], file)
