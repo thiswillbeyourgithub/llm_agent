@@ -199,17 +199,16 @@ class WebSearch(llm.Model):
                 )
 
         # load some tools
-        # atools for self.agent, satools for self.sub_agent
-        self.atools = load_tools(
-                [
-                    "ddg-search",
-                    "wikipedia",
-                    "llm-math",
-                    "arxiv",
-                    ],
-                llm=chatgpt)
-        self.satools = self.atools[:]
-        self.satools.append(PubmedQueryRun())
+        self.atools = []  # for self.agent
+        self.satools = []  # for self.sub_agent
+
+        self.atools += load_tools(["llm-math"], llm=chatgpt)
+
+        self.satools += load_tools(["llm-math"], llm=chatgpt)
+        self.satools += load_tools(["ddg-search"], llm=chatgpt)
+        self.satools += load_tools(["wikipedia"], llm=chatgpt)
+        self.satools += load_tools(["arxiv"], llm=chatgpt)
+        self.satools += PubmedQueryRun()
 
         # init memories
         memory = ConversationBufferMemory(
