@@ -74,7 +74,7 @@ class Agent(llm.Model):
         user: Optional[str] = Field(
                 description="If a string, should be the name of the user and will be used for persistent memory.",
                 default=None)
-        tavily: Optional[bool] = Field(
+        tavily_tool: Optional[bool] = Field(
                 description="If True, will use tavily for search if an api key is supplied.",
                 default=False)
         metaphor_tool: Optional[bool] = Field(
@@ -114,10 +114,10 @@ class Agent(llm.Model):
             assert isinstance(tasks, bool), "Invalid type for tasks"
             return tasks
 
-        @field_validator("tavily")
-        def validate_tavily(cls, tavily):
-            assert isinstance(tavily, bool), "Invalid type for tavily"
-            return tavily
+        @field_validator("tavily_tool")
+        def validate_tavily_tool(cls, tavily_tool):
+            assert isinstance(tavily_tool, bool), "Invalid type for tavily_tool"
+            return tavily_tool
 
         @field_validator("metaphor_tool")
         def validate_metaphor_tool(cls, metaphor_tool):
@@ -149,7 +149,7 @@ class Agent(llm.Model):
                     "max_iter": DEFAULT_MAX_ITER,
                     "tasks": DEFAULT_TASKS,
                     "user": None,
-                    "tavily": False,
+                    "tavily_tool": False,
                     "metaphor_tool": False,
                     "files_tool": False,
                     }
@@ -185,7 +185,7 @@ class Agent(llm.Model):
             max_iter,
             tasks,
             user,
-            tavily,
+            tavily_tool,
             metaphor_tool,
             files_tool,
             ):
@@ -299,7 +299,7 @@ class Agent(llm.Model):
             self.atools.append(memorize)
 
         # add tavily search to the tools if possible
-        if tavily:
+        if tavily_tool:
             tavily_key = llm.get_key(None, "tavily", env_var="TAVILY_API_KEY")
             os.environ["TAVILY_API_KEY"] = tavily_key
             if not tavily_key:
@@ -505,7 +505,7 @@ class Agent(llm.Model):
                 "max_iter": prompt.options.max_iter,
                 "tasks": prompt.options.tasks,
                 "user": prompt.options.user,
-                "tavily": prompt.options.tavily,
+                "tavily_tool": prompt.options.tavily_tool,
                 "metaphor_tool": prompt.options.metaphor_tool,
                 "files_tool": prompt.options.files_tool,
                 }
