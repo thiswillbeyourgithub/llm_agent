@@ -1,5 +1,5 @@
 [project]
-name = "llm-agent"
+name = "llm-agent-plugin"
 version = "0.8"
 description = "plugin for simonw's llm to add a langchain agent"
 readme = "README.md"

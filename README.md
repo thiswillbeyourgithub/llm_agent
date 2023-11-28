@@ -2,7 +2,7 @@
 Plugin for [llm](https://llm.datasette.io/) by the great [simonw](https://simonwillison.net/) to add a simple langchain agent.
 
 ## Note
-* to install: `llm install llm-agent`
+* to install: `llm install llm-agent-plugin`
 * to run: `llm chat -m agent`
 * Very early stage, done mostly while procrastinating work. Will improve a lot.
 
