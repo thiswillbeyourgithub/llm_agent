@@ -398,8 +398,8 @@ class WebSearch(llm.Model):
                 return final_answer
 
             self.sub_agent = initialize_agent(
-                    self.satools,
-                    chatgpt,
+                    llm=chatgpt,
+                    tools=self.satools,
                     verbose=self.verbose,
                     agent=AgentType.STRUCTURED_CHAT_ZERO_SHOT_REACT_DESCRIPTION,
                     # agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,
@@ -452,8 +452,8 @@ class WebSearch(llm.Model):
         )
 
         self.agent = initialize_agent(
-                self.satools,
-                chatgpt,
+                llm=chatgpt,
+                tools=self.satools,
                 verbose=self.verbose,
                 # agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,
                 agent=AgentType.STRUCTURED_CHAT_ZERO_SHOT_REACT_DESCRIPTION,
