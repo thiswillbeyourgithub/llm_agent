@@ -80,8 +80,8 @@ class Agent(llm.Model):
         metaphor: Optional[bool] = Field(
                 description="If True, will use metaphor for search if an api key is supplied.",
                 default=False)
-        files: Optional[bool] = Field(
-                description="If True, will enable the file tool. Be careful.",
+        files_tool: Optional[bool] = Field(
+                description="If True, will enable the file related tools. Be careful.",
                 default=False)
 
         @field_validator("quiet")
@@ -124,10 +124,10 @@ class Agent(llm.Model):
             assert isinstance(metaphor, bool), "Invalid type for metaphor"
             return metaphor
 
-        @field_validator("files")
-        def validate_files(cls, files):
-            assert isinstance(files, bool), "Invalid type for files"
-            return files
+        @field_validator("files_tool")
+        def validate_files_tool(cls, files_tool):
+            assert isinstance(files_tool, bool), "Invalid type for files_tool"
+            return files_tool
 
     def __init__(self):
         self.configured = False
@@ -151,7 +151,7 @@ class Agent(llm.Model):
                     "user": None,
                     "tavily": False,
                     "metaphor": False,
-                    "files": False,
+                    "files_tool": False,
                     }
             for arg in args.split("--option"):
                 arg = arg.strip()
@@ -187,7 +187,7 @@ class Agent(llm.Model):
             user,
             tavily,
             metaphor,
-            files,
+            files_tool,
             ):
         self.verbose = not quiet
         set_verbose(self.verbose)
@@ -224,7 +224,7 @@ class Agent(llm.Model):
         # self.satools += PubmedQueryRun()
         self.satools += load_tools(["human"])
 
-        if files:
+        if files_tool:
             toolkit = FileManagementToolkit(
                     selected_tools=[
                         "read_file",
@@ -507,7 +507,7 @@ class Agent(llm.Model):
                 "user": prompt.options.user,
                 "tavily": prompt.options.tavily,
                 "metaphor": prompt.options.metaphor,
-                "files": prompt.options.files,
+                "files_tool": prompt.options.files,
                 }
 
         if not self.configured:
