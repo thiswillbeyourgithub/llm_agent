@@ -434,8 +434,9 @@ class WebSearch(llm.Model):
                 return_intermediate_steps=True,
                 )
 
-        if self.verbose:
-            print(f"(Tools as the agent's disposal: {', '.join([t.name for t in self.tools])})")
+        print(f"(Tools as the agent's disposal: {', '.join([t.name for t in self.atools])})")
+        if tasks:
+            print(f"(Tools at the disposal of BigTask's agent: {', '.join([t.name for t in self.satools])})")
 
         self.configured = True
 
