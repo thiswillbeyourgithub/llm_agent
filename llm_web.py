@@ -177,7 +177,8 @@ class WebSearch(llm.Model):
                 )
 
         # load some tools
-        self.tools = load_tools(
+        # atools for self.agent, satools for self.sub_agent
+        self.atools = load_tools(
                 [
                     "ddg-search",
                     "wikipedia",
@@ -185,7 +186,8 @@ class WebSearch(llm.Model):
                     "arxiv",
                     ],
                 llm=chatgpt)
-        self.tools.append(PubmedQueryRun())
+        self.satools = self.atools[:]
+        self.satools.append(PubmedQueryRun())
 
         # init memories
         memory = ConversationBufferMemory(
@@ -245,7 +247,7 @@ class WebSearch(llm.Model):
                     json.dump(memories, file)
                 return f"I added the memory '{memory}' to persistent memory."
 
-            self.tools.append(memorize)
+            self.atools.append(memorize)
 
         # add tavily search to the tools if possible
         tavily_key = llm.get_key(None, "tavily", env_var="TAVILY_API_KEY")
@@ -256,7 +258,7 @@ class WebSearch(llm.Model):
             # can only be loaded after the API key was set
             tavily_search = TavilySearchAPIWrapper()
             tavily_tool = TavilySearchResults(api_wrapper=tavily_search)
-            self.tools.append(tavily_tool)
+            self.atools.append(tavily_tool)
 
         # add metaphor only if available
         metaphor_key = llm.get_key(None, "metaphor", env_var="METAPHOR_API_KEY")
@@ -281,7 +283,7 @@ class WebSearch(llm.Model):
                 output = output.strip()
                 return output
 
-            self.tools.append(metaphor_search)
+            self.atools.append(metaphor_search)
 
         if self.tasks:
             template = dedent("""
@@ -368,7 +370,7 @@ class WebSearch(llm.Model):
                 return final_answer
 
             self.sub_agent = initialize_agent(
-                    self.tools, # + [BigTask],  # don't allow recursive call to BigTask
+                    self.satools,
                     chatgpt,
                     verbose=self.verbose,
                     # agent=AgentType.STRUCTURED_CHAT_ZERO_SHOT_REACT_DESCRIPTION,
@@ -381,9 +383,9 @@ class WebSearch(llm.Model):
                     )
 
             # only add to the tools now so that sub_agent can't make recursive bigtask calls
-            self.tools += [BigTask]
+            self.atools += [BigTask]
 
-        self.tools += load_tools(["human"])  # note that human tools is
+        self.atools += load_tools(["human"])  # note that human tools is
         # accessible to self.agent but not to self.sub_agent
 
         template = dedent("""
@@ -421,7 +423,7 @@ class WebSearch(llm.Model):
         )
 
         self.agent = initialize_agent(
-                self.tools,
+                self.satools,
                 chatgpt,
                 verbose=self.verbose,
                 agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,
