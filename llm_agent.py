@@ -242,10 +242,10 @@ class Agent(llm.Model):
                         "read_file",
                         "write_file",
                         "list_directory",
-                        # "movefile",
-                        # "filesearch",
+                        "filesearch",
+                        "movefile",
+                        "copyfile",
                         # "deletefile",
-                        # "copyfile",
                         ])
             self.atools += toolkit.get_tools()
 
