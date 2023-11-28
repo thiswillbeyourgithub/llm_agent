@@ -82,7 +82,7 @@ class Agent(llm.Model):
                 default=False)
         files_tool: Optional[bool] = Field(
                 description="If True, will enable the file related tools. Be careful.",
-                default=False)
+                default=DEFAULT_FILES)
 
         @field_validator("quiet")
         def validate_quiet(cls, quiet):
@@ -151,7 +151,7 @@ class Agent(llm.Model):
                     "user": None,
                     "tavily_tool": False,
                     "metaphor_tool": False,
-                    "files_tool": False,
+                    "files_tool": DEFAULT_FILES,
                     }
             for arg in args.split("--option"):
                 arg = arg.strip()
