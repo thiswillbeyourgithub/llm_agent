@@ -209,7 +209,7 @@ class WebSearch(llm.Model):
         self.satools += load_tools(["ddg-search"], llm=chatgpt)
         self.satools += load_tools(["wikipedia"], llm=chatgpt)
         self.satools += load_tools(["arxiv"], llm=chatgpt)
-        self.satools += PubmedQueryRun()
+        # self.satools += PubmedQueryRun()
         self.satools += load_tools(["human"])
 
         # init memories
