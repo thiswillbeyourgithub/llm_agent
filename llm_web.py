@@ -15,6 +15,8 @@ from langchain.globals import set_verbose, set_debug
 from langchain.agents import load_tools
 from langchain.agents.initialize import initialize_agent
 from langchain.agents.agent_types import AgentType
+from langchain.agents.agent_toolkits import PlayWrightBrowserToolkit
+from langchain.tools.playwright.utils import create_async_playwright_browser
 from langchain.chains import LLMChain
 from langchain.chat_models import ChatOpenAI
 from langchain.prompts import PromptTemplate
@@ -285,6 +287,11 @@ class WebSearch(llm.Model):
 
             self.atools.append(metaphor_search)
 
+        # add browser toolkit
+        self.browser = create_async_playwright_browser()
+        toolkit = PlayWrightBrowserToolkit.from_browser(async_browser=self.browser)
+        self.satools.extend(toolkit.get_tools())
+
         if self.tasks:
             template = dedent("""
             At the end, I want to answer the question '{question}'. Your task is to generate a few intermediate steps needed to answer that question. Don't create steps that are too vague or that would need to be broken down themselves.
@@ -373,8 +380,8 @@ class WebSearch(llm.Model):
                     self.satools,
                     chatgpt,
                     verbose=self.verbose,
-                    # agent=AgentType.STRUCTURED_CHAT_ZERO_SHOT_REACT_DESCRIPTION,
-                    agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,
+                    agent=AgentType.STRUCTURED_CHAT_ZERO_SHOT_REACT_DESCRIPTION,
+                    # agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,
                     memory=sub_memory,
                     handle_parsing_errors=True,
                     max_execution_time=DEFAULT_TIMEOUT,
@@ -426,7 +433,8 @@ class WebSearch(llm.Model):
                 self.satools,
                 chatgpt,
                 verbose=self.verbose,
-                agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,
+                # agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,
+                agent=AgentType.STRUCTURED_CHAT_ZERO_SHOT_REACT_DESCRIPTION,
                 memory=memory,
                 handle_parsing_errors=True,
                 max_execution_time=DEFAULT_TIMEOUT,
