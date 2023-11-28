@@ -83,7 +83,7 @@ class Agent(llm.Model):
                 description="If True, will use metaphor for search if an api key is supplied.",
                 default=False)
         files_tool: Optional[bool] = Field(
-                description="If True, will enable the file related tools. Be careful.",
+                description="If True, will enable the file related tools. The tool 'delete_file' is disabled but be careful.",
                 default=DEFAULT_FILES)
         shell_tool: Optional[bool] = Field(
                 description="If True, will enable the tool to use the shell. Be careful.",
