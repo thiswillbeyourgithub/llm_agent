@@ -7,7 +7,8 @@ Plugin for [llm](https://llm.datasette.io/) by the great [simonw](https://simonw
 * Very early stage, done mostly while procrastinating work. Will improve a lot.
 
 ## Features
-* Multiple search engines: duckduckgo, metaphor, tavily, wikipedia
+* Multiple search engines: duckduckgo, metaphor, tavily, wikipedia, arxiv etc.
+* Browser tool: use playweight to browse the internet without interactions.
 * BigTask tool: used to split a task into subtasks
 * Math tool: calculator included
 * Persistent memory: if you use the `user` argument, you can just ask the LLM to memorize something (for example "I want you to memorize that I'm a computer science engineer.")
