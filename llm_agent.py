@@ -77,7 +77,7 @@ class Agent(llm.Model):
         tavily: Optional[bool] = Field(
                 description="If True, will use tavily for search if an api key is supplied.",
                 default=False)
-        metaphor: Optional[bool] = Field(
+        metaphor_tool: Optional[bool] = Field(
                 description="If True, will use metaphor for search if an api key is supplied.",
                 default=False)
         files_tool: Optional[bool] = Field(
@@ -119,10 +119,10 @@ class Agent(llm.Model):
             assert isinstance(tavily, bool), "Invalid type for tavily"
             return tavily
 
-        @field_validator("metaphor")
-        def validate_metaphor(cls, metaphor):
-            assert isinstance(metaphor, bool), "Invalid type for metaphor"
-            return metaphor
+        @field_validator("metaphor_tool")
+        def validate_metaphor_tool(cls, metaphor_tool):
+            assert isinstance(metaphor_tool, bool), "Invalid type for metaphor_tool"
+            return metaphor_tool
 
         @field_validator("files_tool")
         def validate_files_tool(cls, files_tool):
@@ -150,7 +150,7 @@ class Agent(llm.Model):
                     "tasks": DEFAULT_TASKS,
                     "user": None,
                     "tavily": False,
-                    "metaphor": False,
+                    "metaphor_tool": False,
                     "files_tool": False,
                     }
             for arg in args.split("--option"):
@@ -186,7 +186,7 @@ class Agent(llm.Model):
             tasks,
             user,
             tavily,
-            metaphor,
+            metaphor_tool,
             files_tool,
             ):
         self.verbose = not quiet
@@ -311,7 +311,7 @@ class Agent(llm.Model):
                 self.atools.append(tavily_tool)
 
         # add metaphor only if available
-        if metaphor:
+        if metaphor_tool:
             metaphor_key = llm.get_key(None, "metaphor", env_var="METAPHOR_API_KEY")
             os.environ["METAPHOR_API_KEY"] = metaphor_key
             if not metaphor_key:
@@ -506,7 +506,7 @@ class Agent(llm.Model):
                 "tasks": prompt.options.tasks,
                 "user": prompt.options.user,
                 "tavily": prompt.options.tavily,
-                "metaphor": prompt.options.metaphor,
+                "metaphor_tool": prompt.options.metaphor_tool,
                 "files_tool": prompt.options.files_tool,
                 }
 
