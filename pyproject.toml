@@ -1,6 +1,6 @@
 [project]
 name = "llm-agent-plugin"
-version = "0.8"
+version = "0.1.0"
 description = "plugin for simonw's llm to add a langchain agent"
 readme = "README.md"
 authors = [{ name = "thiswillbeyourgithub"}]
