@@ -233,8 +233,12 @@ class Agent(llm.Model):
         self.satools += load_tools(["ddg-search"], llm=chatgpt)
         self.satools += load_tools(["wikipedia"], llm=chatgpt)
         self.satools += load_tools(["arxiv"], llm=chatgpt)
-        # self.satools += PubmedQueryRun()
         self.satools += load_tools(["human"])
+
+        # pubmed is a bit buggy at the moment
+        # pubmed_tool = PubmedQueryRun()
+        # pubmed_tool.description += f"args {pubmed_tool.args}".replace("{", "{{").replace("}", "}}")
+        # self.satools += pubmed_tool
 
         if files_tool:
             toolkit = FileManagementToolkit(
