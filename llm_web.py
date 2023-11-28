@@ -453,7 +453,7 @@ class WebSearch(llm.Model):
 
         self.agent = initialize_agent(
                 llm=chatgpt,
-                tools=self.satools,
+                tools=self.atools,
                 verbose=self.verbose,
                 # agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,
                 agent=AgentType.STRUCTURED_CHAT_ZERO_SHOT_REACT_DESCRIPTION,
