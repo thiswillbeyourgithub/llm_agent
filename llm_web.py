@@ -16,7 +16,7 @@ from langchain.agents import load_tools
 from langchain.agents.initialize import initialize_agent
 from langchain.agents.agent_types import AgentType
 from langchain.agents.agent_toolkits import PlayWrightBrowserToolkit
-from langchain.tools.playwright.utils import create_async_playwright_browser
+from langchain.tools.playwright.utils import create_sync_playwright_browser
 from langchain.chains import LLMChain
 from langchain.chat_models import ChatOpenAI
 from langchain.prompts import PromptTemplate
@@ -310,8 +310,8 @@ class WebSearch(llm.Model):
                 self.atools.append(metaphor_search)
 
         # add browser toolkit
-        self.browser = create_async_playwright_browser()
-        toolkit = PlayWrightBrowserToolkit.from_browser(async_browser=self.browser)
+        self.browser = create_sync_playwright_browser()
+        toolkit = PlayWrightBrowserToolkit.from_browser(sync_browser=self.browser)
         self.satools.extend(toolkit.get_tools())
 
         if self.tasks:
