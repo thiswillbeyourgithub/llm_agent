@@ -415,6 +415,7 @@ class WebSearch(llm.Model):
 
         self.atools += load_tools(["human"])  # note that human tools is
         # accessible to self.agent but not to self.sub_agent
+        self.satools += load_tools(["human"])
 
         template = dedent("""
         Given a question and an answer, your task is to check the apparent validity of the answer.
