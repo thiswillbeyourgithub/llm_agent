@@ -1,9 +1,9 @@
-# llm_web
-Plugin for [llm](https://llm.datasette.io/) by the great [simonw](https://simonwillison.net/) to add a simple langchain agent that searches the web.
+# llm_agent
+Plugin for [llm](https://llm.datasette.io/) by the great [simonw](https://simonwillison.net/) to add a simple langchain agent.
 
 ## Note
-* to install: `llm install llm-web`
-* to run: `llm chat -m web`
+* to install: `llm install llm-agent`
+* to run: `llm chat -m agent`
 * Very early stage, done mostly while procrastinating work. Will improve a lot.
 
 ## Features
@@ -269,7 +269,7 @@ Question was: `Use 'complicated' to look up the age of the UK prime minister and
 Total cost: 14901 tokens, so $0.015 using ChatGPT-3.5-turbo-1106
 
 ```
-Chatting with web
+Chatting with agent
 Type 'exit' or 'quit' to exit
 Type '!multi' to enter multiple lines, then '!end' to finish
 > Use 'complicated' to look up the age of the UK prime minister and of Angela Merkel, multiply them together then divide by the age of the wife of Barrack Obama.
