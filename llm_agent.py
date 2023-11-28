@@ -507,7 +507,7 @@ class Agent(llm.Model):
                 "user": prompt.options.user,
                 "tavily": prompt.options.tavily,
                 "metaphor": prompt.options.metaphor,
-                "files_tool": prompt.options.files,
+                "files_tool": prompt.options.files_tool,
                 }
 
         if not self.configured:
