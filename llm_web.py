@@ -167,15 +167,6 @@ class WebSearch(llm.Model):
                 "Store a 'openai' key."
             )
         os.environ["OPENAI_API_KEY"] = openai_key
-        tavily_key = llm.get_key(None, "tavily", env_var="TAVILY_API_KEY")
-        if not tavily_key:
-            print("No Tavily API key given, will only use duckduckgo for search.")
-        os.environ["TAVILY_API_KEY"] = tavily_key
-
-        metaphor_key = llm.get_key(None, "metaphor", env_var="METAPHOR_API_KEY")
-        if not metaphor_key:
-            print("No Metaphor API key given, will not use this search engine.")
-        os.environ["METAPHOR_API_KEY"] = metaphor_key
 
         # load llm
         chatgpt = ChatOpenAI(
@@ -259,17 +250,24 @@ class WebSearch(llm.Model):
             self.tools.append(memorize)
 
         # add tavily search to the tools if possible
-        try:
+        tavily_key = llm.get_key(None, "tavily", env_var="TAVILY_API_KEY")
+        os.environ["TAVILY_API_KEY"] = tavily_key
+        if not tavily_key:
+            print("No Tavily API key given, will only use duckduckgo for search.")
+        else:
             # can only be loaded after the API key was set
             tavily_search = TavilySearchAPIWrapper()
             tavily_tool = TavilySearchResults(api_wrapper=tavily_search)
             self.tools.append(tavily_tool)
-        except Exception:
-            pass
 
         # add metaphor only if available
-        try:
+        metaphor_key = llm.get_key(None, "metaphor", env_var="METAPHOR_API_KEY")
+        os.environ["METAPHOR_API_KEY"] = metaphor_key
+        if not metaphor_key:
+            print("No Metaphor API key given, will not use this search engine.")
+        else:
             mtph = Metaphor(api_key=os.environ["METAPHOR_API_KEY"])
+
             @tool
             def metaphor_search(query: str) -> str:
                 """Advanced search using Metaphor. Use for advanced
@@ -286,8 +284,6 @@ class WebSearch(llm.Model):
                 return output
 
             self.tools.append(metaphor_search)
-        except Exception:
-            pass
 
         if self.tasks:
             template = dedent("""
