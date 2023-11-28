@@ -216,11 +216,11 @@ class WebSearch(llm.Model):
                 output_key="output",
                 memory_key="chat_history",
                 return_messages=True)
-        sub_memory = ConversationBufferWindowMemory(
-                output_key="output",
-                memory_key="chat_history",
-                return_messages=True,
-                k=2)
+        # sub_memory = ConversationBufferWindowMemory(
+        #         output_key="output",
+        #         memory_key="chat_history",
+        #         return_messages=True,
+        #         k=2)
 
         if not user:
             # just tell the llm the date
@@ -404,7 +404,7 @@ class WebSearch(llm.Model):
                     verbose=self.verbose,
                     agent=AgentType.STRUCTURED_CHAT_ZERO_SHOT_REACT_DESCRIPTION,
                     # agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,
-                    memory=sub_memory,
+                    memory=memory,
                     handle_parsing_errors=True,
                     max_execution_time=DEFAULT_TIMEOUT,
                     max_iterations=DEFAULT_MAX_ITER,
