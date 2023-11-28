@@ -248,6 +248,7 @@ class Agent(llm.Model):
                         # "deletefile",
                         ])
             self.atools += toolkit.get_tools()
+            self.satools += toolkit.get_tools()
 
         if shell_tool:
             self.atools += ShellTool()
