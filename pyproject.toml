@@ -5,7 +5,7 @@ description = "plugin for simonw's llm to add a langchain agent"
 readme = "README.md"
 authors = [{ name = "thiswillbeyourgithub"}]
 license = { file = "LICENSE" }
-keywords = ["llm", "openai", "agent", "simonw", "websearch", "agent"]
+keywords = ["llm", "openai", "agent", "simonw", "websearch", "agent", "langchain"]
 requires-python = ">=3.9"
 dependencies = [
     "langchain==0.0.336",
