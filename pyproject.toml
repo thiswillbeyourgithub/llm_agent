@@ -27,8 +27,8 @@ Homepage = "https://github.com/thiswillbeyourgithub/llm_agent"
 agent = "llm_agent"
 
 [tool.bumpver]
-current_version = "0.8"
-version_pattern = "MAJOR.MINOR"
+current_version = "0.1.0"
+version_pattern = "MAJOR.MINOR.PATCH"
 commit_message = "bump version {old_version} -> {new_version}"
 tag_message = "{new_version}"
 tag_scope = "default"
