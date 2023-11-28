@@ -203,12 +203,14 @@ class WebSearch(llm.Model):
         self.satools = []  # for self.sub_agent
 
         self.atools += load_tools(["llm-math"], llm=chatgpt)
+        self.atools += load_tools(["human"])
 
         self.satools += load_tools(["llm-math"], llm=chatgpt)
         self.satools += load_tools(["ddg-search"], llm=chatgpt)
         self.satools += load_tools(["wikipedia"], llm=chatgpt)
         self.satools += load_tools(["arxiv"], llm=chatgpt)
         self.satools += PubmedQueryRun()
+        self.satools += load_tools(["human"])
 
         # init memories
         memory = ConversationBufferMemory(
@@ -412,10 +414,6 @@ class WebSearch(llm.Model):
 
             # only add to the tools now so that sub_agent can't make recursive bigtask calls
             self.atools += [BigTask]
-
-        self.atools += load_tools(["human"])  # note that human tools is
-        # accessible to self.agent but not to self.sub_agent
-        self.satools += load_tools(["human"])
 
         template = dedent("""
         Given a question and an answer, your task is to check the apparent validity of the answer.
