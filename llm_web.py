@@ -15,6 +15,7 @@ from langchain.globals import set_verbose, set_debug
 from langchain.agents import load_tools
 from langchain.agents.initialize import initialize_agent
 from langchain.agents.agent_types import AgentType
+from langchain.agents.agent_toolkits import FileManagementToolkit
 from langchain.agents.agent_toolkits import PlayWrightBrowserToolkit
 from langchain.tools.playwright.utils import create_sync_playwright_browser
 from langchain.chains import LLMChain
@@ -78,6 +79,9 @@ class WebSearch(llm.Model):
         metaphor: Optional[bool] = Field(
                 description="If True, will use metaphor for search if an api key is supplied.",
                 default=False)
+        files: Optional[bool] = Field(
+                description="If True, will enable the file tool. Be careful.",
+                default=False)
 
         @field_validator("quiet")
         def validate_quiet(cls, quiet):
@@ -119,6 +123,11 @@ class WebSearch(llm.Model):
             assert isinstance(metaphor, bool), "Invalid type for metaphor"
             return metaphor
 
+        @field_validator("files")
+        def validate_files(cls, files):
+            assert isinstance(files, bool), "Invalid type for files"
+            return files
+
     def __init__(self):
         self.configured = False
 
@@ -141,6 +150,7 @@ class WebSearch(llm.Model):
                     "user": None,
                     "tavily": False,
                     "metaphor": False,
+                    "files": False,
                     }
             for arg in args.split("--option"):
                 arg = arg.strip()
@@ -176,6 +186,7 @@ class WebSearch(llm.Model):
             user,
             tavily,
             metaphor,
+            files,
             ):
         self.verbose = not quiet
         set_verbose(self.verbose)
@@ -211,6 +222,20 @@ class WebSearch(llm.Model):
         self.satools += load_tools(["arxiv"], llm=chatgpt)
         # self.satools += PubmedQueryRun()
         self.satools += load_tools(["human"])
+
+        if files:
+            toolkit = FileManagementToolkit(
+                    selected_tools=[
+                        "read_file",
+                        "write_file",
+                        "list_directory",
+                        # "movefile",
+                        # "filesearch",
+                        # "deletefile",
+                        # "copyfile",
+                        ])
+            self.atools += toolkit.get_tools()
+
 
         # init memories
         memory = ConversationBufferMemory(
@@ -481,6 +506,7 @@ class WebSearch(llm.Model):
                 "user": prompt.options.user,
                 "tavily": prompt.options.tavily,
                 "metaphor": prompt.options.metaphor,
+                "files": prompt.options.files,
                 }
 
         if not self.configured:
