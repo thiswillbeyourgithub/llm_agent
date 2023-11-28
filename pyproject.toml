@@ -1,11 +1,11 @@
 [project]
-name = "llm-web"
+name = "llm-agent"
 version = "0.8"
-description = "plugin for simonw's llm to add a web search LLM agent"
+description = "plugin for simonw's llm to add a langchain agent"
 readme = "README.md"
 authors = [{ name = "thiswillbeyourgithub"}]
 license = { file = "LICENSE" }
-keywords = ["llm", "openai", "agent", "simonw", "websearch", "web", "search"]
+keywords = ["llm", "openai", "agent", "simonw", "websearch", "agent"]
 requires-python = ">=3.9"
 dependencies = [
     "langchain==0.0.336",
@@ -20,11 +20,11 @@ dependencies = [
     ]
 
 [projects.urls]
-Homepage = "https://github.com/thiswillbeyourgithub/llm_web"
+Homepage = "https://github.com/thiswillbeyourgithub/llm_agent"
 
 
 [project.entry-points.llm]
-web = "llm_web"
+agent = "llm_agent"
 
 [tool.bumpver]
 current_version = "0.8"
@@ -40,4 +40,4 @@ push = false
 
 [tool.bumpver.file_patterns]
 "pyproject.toml" = ['current_version = "{version}"', 'version = "{version}"']
-"llm_web.py" = ["VERSION = {version}"]
+"llm_agent.py" = ["VERSION = {version}"]
