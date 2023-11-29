@@ -20,7 +20,7 @@ Plugin for [llm](https://llm.datasette.io/) by the great [simonw](https://simonw
     * shell (optional, any command)
     * memorize (optional, if 'user' argument is set this will be used to store information about the user if explicitly asked to remember it)
     * tavily (optional, a search engine friendly to LLM, API key is required)
-    * metahpor (optional, a search engine friendly to LLM, API key is required)
+    * metaphor (optional, a search engine friendly to LLM, API key is required)
 
 * sub_agent (= almost the same as agent but is called to handle subtasks created by BigTask and does not have access to BigTask itself, making infinite recursion using BigTask impossible)
     * llm-math
