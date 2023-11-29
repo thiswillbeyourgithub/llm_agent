@@ -40,6 +40,7 @@ DEFAULT_MAX_ITER = 50
 DEFAULT_BIGTASK = True
 DEFAULT_FILES = False
 DEFAULT_SHELL = False
+DEFAULT_VALIDATE_SUBTASK = False
 
 
 @llm.hookimpl
@@ -71,6 +72,9 @@ class Agent(llm.Model):
         max_iter: Optional[int] = Field(
                 description="Agent max iteration",
                 default=DEFAULT_MAX_ITER)
+        validate_subtask: Optional[bool] = Field(
+                description="If True, will use the LLM to check if answer to the subtask of BigTask. This can get expensive.",
+                default=DEFAULT_VALIDATE_SUBTASK)
         bigtask_tool: Optional[bool] = Field(
                 description="True to use subtasks",
                 default=DEFAULT_BIGTASK)
@@ -115,6 +119,11 @@ class Agent(llm.Model):
             assert isinstance(max_iter, int), "Invalid type for max_iter"
             return max_iter
 
+        @field_validator("validate_subtask")
+        def validate_validate_subtask(cls, validate_subtask):
+            assert isinstance(validate_subtask, bool), "Invalid type for validate_subtask"
+            return validate_subtask
+
         @field_validator("bigtask_tool")
         def validate_bigtask_tool(cls, bigtask_tool):
             assert isinstance(bigtask_tool, bool), "Invalid type for bigtask_tool"
@@ -158,6 +167,7 @@ class Agent(llm.Model):
                     "temperature": DEFAULT_TEMP,
                     "timeout": DEFAULT_TIMEOUT,
                     "max_iter": DEFAULT_MAX_ITER,
+                    "validate_subtask": DEFAULT_VALIDATE_SUBTASK,
                     "user": None,
                     "tavily_tool": False,
                     "bigtask_tool": DEFAULT_BIGTASK,
@@ -195,6 +205,7 @@ class Agent(llm.Model):
             temperature,
             timeout,
             max_iter,
+            validate_subtask,
             bigtask_tool,
             user,
             tavily_tool,
@@ -206,7 +217,11 @@ class Agent(llm.Model):
         set_verbose(self.verbose)
         set_debug(debug)
 
+        self.validate_subtask = validate_subtask
         self.bigtask_tool = bigtask_tool
+
+        if not self.bigtask_tool and self.validate_subtask:
+            raise Exception("Can't set validate_subtask to True if bigtask is disabled")
 
         openai_key = llm.get_key(None, "openai", env_var="OPENAI_API_KEY")
         if not openai_key:
@@ -425,7 +440,8 @@ class Agent(llm.Model):
                         print(f"Error {err}, retrying after 2s")
                         time.sleep(2)
                         answerdict = self.sub_agent(stepprompt)
-                        # intermediate_answer = self._validate_answer(stepprompt, intermediate_answer)
+                        if self.validate_subtask:
+                            answerdict = self._validate_answer(stepprompt, answerdict)
 
                     answers.append(answerdict["output"])
                     intermediate_stepanswers.append(answerdict["intermediate_steps"])
@@ -532,6 +548,7 @@ class Agent(llm.Model):
                 "temperature": prompt.options.temperature,
                 "timeout": prompt.options.timeout,
                 "max_iter": prompt.options.max_iter,
+                "validate_subtask": prompt.options.validate_subtask,
                 "user": prompt.options.user,
                 "tavily_tool": prompt.options.tavily_tool,
                 "bigtask_tool": prompt.options.bigtask_tool,
@@ -557,27 +574,29 @@ class Agent(llm.Model):
         else:
             return answerdict["output"]
 
-    # def _validate_answer(self, question, answer, depth=0):
-    #     "used to double check results. Can get very expensive"
-    #     try:
-    #         check = self.validity_checker(question=question, answer=answer)
-    #         if self.verbose:
-    #             print(f"Validity checker output: {check}")
+    def _validate_answer(self, question, answerdict, depth=0):
+        "used to double check results. Can get very expensive"
+        try:
+            check = self.validity_checker(question=question, answer=answerdict["output"])
+            if self.verbose:
+                print(f"Validity checker output: {check}")
 
-    #         assert ":" in check, f"check is missing: '{check}'"
-    #         state = check.split(":")[0]
-    #         reason = ":".join(check.split(":")[1:])
-    #         assert state in ["VALID", "INVALID"], f"Invalid state: '{state}'"
+            assert ":" in check, f"check is missing: '{check}'"
+            state = check.split(":")[0]
+            reason = ":".join(check.split(":")[1:])
+            assert state in ["VALID", "INVALID"], f"Invalid state: '{state}'"
 
-    #         if state == "INVALID":
-    #             new_answer = self.agent(
-    #                     f"Try again another way because your answer seems invalid: {reason}")
-    #             if depth >= 1:
-    #                 return new_answer
-    #             else:
-    #                 # recursive call:
-    #                 return self._validate_answer(question, new_answer, depth+1)
-    #         else:
-    #             return answer
-    #     except Exception as err:
-    #         print(f"Error when checking validity: '{err}'")
+            if state == "INVALID":
+                new_answerdict = self.sub_agent(
+                        f"To the question '{question}' you answered "
+                        f"'{answerdict['output']}' which is invalid because "
+                        f"'{reason}'. Try again.")
+                if depth >= 1:
+                    return new_answerdict
+                else:
+                    # recursive call:
+                    return self._validate_answer(question, new_answerdict, depth+1)
+            else:
+                return answerdict
+        except Exception as err:
+            print(f"Error when checking validity: '{err}'")
