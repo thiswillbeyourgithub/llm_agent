@@ -15,23 +15,24 @@ Plugin for [llm](https://llm.datasette.io/) by the great [simonw](https://simonw
 * agent
     * llm-math (calculator)
     * human (meaning it can decide to ask you for stuff)
-    * files (optional, read, write, list, search, move, copy)
     * BigTask (ability to call sub_agent to split the task into many subtasks, each subtask has access to the tools of sub_agent)
+    * files (optional, read, write, list, search, move, copy)
     * shell (optional, any command)
     * memorize (optional, if 'user' argument is set this will be used to store information about the user if explicitly asked to remember it)
-    * tavily (optional, a search engine friendly to LLM, API key is required)
-    * metaphor (optional, a search engine friendly to LLM, API key is required)
 
 * sub_agent (= almost the same as agent but is called to handle subtasks created by BigTask and does not have access to BigTask itself, making infinite recursion using BigTask impossible)
     * llm-math
     * human
-    * ddg-search (quick answers via duckduckgo, no API required)
-    * wikipedia (quick answers via wikipedia, not the whole article)
-    * arxiv
-    * pubmed (buggy at the moment)
+    * search related:
+        * browser tools (it can use playwright to navigate the web autonomously)
+        * ddg-search (quick answers via duckduckgo, no API required)
+        * tavily (optional, a search engine friendly to LLM, API key is required)
+        * metaphor (optional, a search engine friendly to LLM, API key is required)
+        * wikipedia (quick answers via wikipedia, not the whole article)
+        * arxiv
+        * pubmed (buggy at the moment)
     * files (if enabled)
     * shell (if enabled)
-    * browser tools (it can use playwright to navigate the web autonomously)
 
 **Note that if the arugment task_tool is set to False, BigTask tool will not appear and all tools of the sub_agent will be given to the agent instead.**
 
