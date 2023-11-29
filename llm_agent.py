@@ -1,3 +1,4 @@
+import textwrap
 import sys
 from datetime import datetime
 from bs4 import BeautifulSoup
@@ -439,7 +440,9 @@ class Agent(llm.Model):
 
                 final_answer = f"Assistant, return the complete following text as the final answer instead of just extracting the last few lines like you used to:\n'''\nI split the question into intermediate steps then tried to reason step by step.\nSteps:\n"
                 for i, step in enumerate(steps):
-                    step = f"\n{i+1}. {step}. Answer: '{answers[i]}'"
+                    step = f"\n{i+1}. {step}. Answer:\n"
+                    step += textwrap.indent(answers[i], "    ")
+                    step = step.replace("\\n", "\n")
                     final_answer += step
                 final_answer += f"\nThe answer is: '{answers[-1]}'\n'''"
 
