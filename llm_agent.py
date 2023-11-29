@@ -37,7 +37,7 @@ DEFAULT_MODEL = "gpt-3.5-turbo-1106"
 DEFAULT_TEMP = 0
 DEFAULT_TIMEOUT = 240  # 4 minutes
 DEFAULT_MAX_ITER = 50
-DEFAULT_TASKS = True
+DEFAULT_BIGTASK = True
 DEFAULT_FILES = False
 DEFAULT_SHELL = False
 
@@ -71,9 +71,9 @@ class Agent(llm.Model):
         max_iter: Optional[int] = Field(
                 description="Agent max iteration",
                 default=DEFAULT_MAX_ITER)
-        tasks: Optional[bool] = Field(
+        bigtask_tool: Optional[bool] = Field(
                 description="True to use subtasks",
-                default=DEFAULT_TASKS)
+                default=DEFAULT_BIGTASK)
         user: Optional[str] = Field(
                 description="If a string, should be the name of the user and will be used for persistent memory.",
                 default=None)
@@ -115,10 +115,10 @@ class Agent(llm.Model):
             assert isinstance(max_iter, int), "Invalid type for max_iter"
             return max_iter
 
-        @field_validator("tasks")
-        def validate_tasks(cls, tasks):
-            assert isinstance(tasks, bool), "Invalid type for tasks"
-            return tasks
+        @field_validator("bigtask_tool")
+        def validate_bigtask_tool(cls, bigtask_tool):
+            assert isinstance(bigtask_tool, bool), "Invalid type for bigtask_tool"
+            return bigtask_tool
 
         @field_validator("tavily_tool")
         def validate_tavily_tool(cls, tavily_tool):
@@ -158,9 +158,9 @@ class Agent(llm.Model):
                     "temperature": DEFAULT_TEMP,
                     "timeout": DEFAULT_TIMEOUT,
                     "max_iter": DEFAULT_MAX_ITER,
-                    "tasks": DEFAULT_TASKS,
                     "user": None,
                     "tavily_tool": False,
+                    "bigtask_tool": DEFAULT_BIGTASK,
                     "metaphor_tool": False,
                     "files_tool": DEFAULT_FILES,
                     "shell_tool": DEFAULT_SHELL,
@@ -195,7 +195,7 @@ class Agent(llm.Model):
             temperature,
             timeout,
             max_iter,
-            tasks,
+            bigtask_tool,
             user,
             tavily_tool,
             metaphor_tool,
@@ -206,7 +206,7 @@ class Agent(llm.Model):
         set_verbose(self.verbose)
         set_debug(debug)
 
-        self.tasks = tasks
+        self.bigtask_tool = bigtask_tool
 
         openai_key = llm.get_key(None, "openai", env_var="OPENAI_API_KEY")
         if not openai_key:
@@ -362,7 +362,7 @@ class Agent(llm.Model):
         toolkit = PlayWrightBrowserToolkit.from_browser(sync_browser=self.browser)
         self.satools.extend(toolkit.get_tools())
 
-        if self.tasks:
+        if self.bigtask_tool:
             template = dedent("""
             At the end, I want to answer the question '{question}'. Your task is to generate a few intermediate steps needed to answer that question. Don't create steps that are too vague or that would need to be broken down themselves.
             The number of steps should ideally be 3 to 5, but can be up to 10 if the question specifically asks for an indepth search.
@@ -512,7 +512,7 @@ class Agent(llm.Model):
                 )
 
         print(f"(Tools as the agent's disposal: {', '.join([t.name for t in self.atools])})")
-        if tasks:
+        if bigtask_tool:
             print(f"(Tools at the disposal of BigTask's agent: {', '.join([t.name for t in self.satools])})")
 
         self.configured = True
@@ -526,9 +526,9 @@ class Agent(llm.Model):
                 "temperature": prompt.options.temperature,
                 "timeout": prompt.options.timeout,
                 "max_iter": prompt.options.max_iter,
-                "tasks": prompt.options.tasks,
                 "user": prompt.options.user,
                 "tavily_tool": prompt.options.tavily_tool,
+                "bigtask_tool": prompt.options.bigtask_tool,
                 "metaphor_tool": prompt.options.metaphor_tool,
                 "files_tool": prompt.options.files_tool,
                 "shell_tool": prompt.options.shell_tool,
