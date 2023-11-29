@@ -231,10 +231,10 @@ class Agent(llm.Model):
         self.atools += load_tools(["human"])
 
         self.satools += load_tools(["llm-math"], llm=chatgpt)
+        self.satools += load_tools(["human"])
         self.satools += load_tools(["ddg-search"], llm=chatgpt)
         self.satools += load_tools(["wikipedia"], llm=chatgpt)
         self.satools += load_tools(["arxiv"], llm=chatgpt)
-        self.satools += load_tools(["human"])
 
         # pubmed is a bit buggy at the moment
         # pubmed_tool = PubmedQueryRun()

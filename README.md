@@ -11,6 +11,30 @@ Plugin for [llm](https://llm.datasette.io/) by the great [simonw](https://simonw
 * Wallet safe: there is a timeout and recursion limit to avoid too high costs. Also the number of token used so far is displayed.
 * Persistent memory: if you use the `user` argument, you can just ask the LLM to memorize something (for example "I want you to memorize that I'm a computer science engineer." or "I want you to memorize that my prefer search engine for people related question is duckduckgo.")
 
+## Current tools available
+* agent
+    * llm-math (calculator)
+    * human (meaning it can decide to ask you for stuff)
+    * files (optional, read, write, list, search, move, copy)
+    * BigTask (ability to call sub_agent to split the task into many subtasks, each subtask has access to the tools of sub_agent)
+    * shell (optional, any command)
+    * memorize (optional, if 'user' argument is set this will be used to store information about the user if explicitly asked to remember it)
+    * tavily (optional, a search engine friendly to LLM, API key is required)
+    * metahpor (optional, a search engine friendly to LLM, API key is required)
+
+* sub_agent (= almost the same as agent but is called to handle subtasks created by BigTask and does not have access to BigTask itself, making infinite recursion using BigTask impossible)
+    * llm-math
+    * human
+    * ddg-search (quick answers via duckduckgo, no API required)
+    * wikipedia (quick answers via wikipedia, not the whole article)
+    * arxiv
+    * pubmed (buggy at the moment)
+    * files (if enabled)
+    * shell (if enabled)
+    * browser tools (it can use playwright to navigate the web autonomously)
+
+**Note that if the arugment task_tool is set to False, BigTask tool will not appear and all tools of the sub_agent will be given to the agent instead.**
+
 ## Things I used it for
 * Using the BigTask tool: make it search information about bioaccumulation in salmon and in tuna to compare which is worst.
 * Using the files tool: make it modify a python code to implement various enhancement (worked incredibly well!)
