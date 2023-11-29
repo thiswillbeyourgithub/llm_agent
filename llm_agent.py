@@ -442,7 +442,7 @@ class Agent(llm.Model):
                 for i, step in enumerate(steps):
                     step = f"\n{i+1}. {step}. Answer:\n"
                     step += textwrap.indent(answers[i], "    ")
-                    step = step.replace("\\n", "\n")
+                    step = step.replace(r"\\n", "\n")
                     final_answer += step
                 final_answer += f"\nThe answer is: '{answers[-1]}'\n'''"
 
