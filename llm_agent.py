@@ -557,26 +557,27 @@ class Agent(llm.Model):
         else:
             return answerdict["output"]
 
-    def _validate_answer(self, question, answer, depth=0):
-        try:
-            check = self.validity_checker(question=question, answer=answer)
-            if self.verbose:
-                print(f"Validity checker output: {check}")
+    # def _validate_answer(self, question, answer, depth=0):
+    #     "used to double check results. Can get very expensive"
+    #     try:
+    #         check = self.validity_checker(question=question, answer=answer)
+    #         if self.verbose:
+    #             print(f"Validity checker output: {check}")
 
-            assert ":" in check, f"check is missing: '{check}'"
-            state = check.split(":")[0]
-            reason = ":".join(check.split(":")[1:])
-            assert state in ["VALID", "INVALID"], f"Invalid state: '{state}'"
+    #         assert ":" in check, f"check is missing: '{check}'"
+    #         state = check.split(":")[0]
+    #         reason = ":".join(check.split(":")[1:])
+    #         assert state in ["VALID", "INVALID"], f"Invalid state: '{state}'"
 
-            if state == "INVALID":
-                new_answer = self.agent(
-                        f"Try again another way because your answer seems invalid: {reason}")
-                if depth >= 1:
-                    return new_answer
-                else:
-                    # recursive call:
-                    return self._validate_answer(question, new_answer, depth+1)
-            else:
-                return answer
-        except Exception as err:
-            print(f"Error when checking validity: '{err}'")
+    #         if state == "INVALID":
+    #             new_answer = self.agent(
+    #                     f"Try again another way because your answer seems invalid: {reason}")
+    #             if depth >= 1:
+    #                 return new_answer
+    #             else:
+    #                 # recursive call:
+    #                 return self._validate_answer(question, new_answer, depth+1)
+    #         else:
+    #             return answer
+    #     except Exception as err:
+    #         print(f"Error when checking validity: '{err}'")
