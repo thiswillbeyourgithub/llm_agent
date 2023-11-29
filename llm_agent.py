@@ -345,6 +345,7 @@ class Agent(llm.Model):
                 tavily_search = TavilySearchAPIWrapper()
                 tavily_tool = TavilySearchResults(api_wrapper=tavily_search)
                 self.atools.append(tavily_tool)
+                self.satools.append(tavily_tool)
 
         # add metaphor only if available
         if metaphor_tool:
@@ -371,6 +372,7 @@ class Agent(llm.Model):
                     return output
 
                 self.atools.append(metaphor_search)
+                self.satools.append(metaphor_search)
 
         # add browser toolkit
         self.browser = create_sync_playwright_browser()
