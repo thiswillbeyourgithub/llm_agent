@@ -43,7 +43,7 @@ Plugin for [llm](https://llm.datasette.io/) by the great [simonw](https://simonw
 ## How to
 * to install: `llm install llm-agent-plugin`
 * to run: `llm chat -m agent`
-* Very early stage, done mostly while procrastinating work. Will improve a lot.
+* start by asking "what are you tools?"
 
 
 ## TODO
