@@ -344,7 +344,6 @@ class Agent(llm.Model):
                 # can only be loaded after the API key was set
                 tavily_search = TavilySearchAPIWrapper()
                 tavily_tool = TavilySearchResults(api_wrapper=tavily_search)
-                self.atools.append(tavily_tool)
                 self.satools.append(tavily_tool)
 
         # add metaphor only if available
@@ -371,7 +370,6 @@ class Agent(llm.Model):
                     output = output.strip()
                     return output
 
-                self.atools.append(metaphor_search)
                 self.satools.append(metaphor_search)
 
         # add browser toolkit
