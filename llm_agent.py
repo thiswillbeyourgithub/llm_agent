@@ -464,6 +464,12 @@ class Agent(llm.Model):
             # only add to the tools now so that sub_agent can't make recursive bigtask calls
             self.atools += [BigTask]
 
+        else:
+            # if not using sub_agent, give all tools to the agent
+            for tool in self.satools:
+                if tool.name not in [t.name for t in self.atools]:
+                    self.atools.append(tool)
+
         template = dedent("""
         Given a question and an answer, your task is to check the apparent validity of the answer.
         If the answer seems correct: answer 'VALID:'
