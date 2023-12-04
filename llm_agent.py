@@ -374,9 +374,12 @@ class Agent(llm.Model):
                 self.satools.append(metaphor_search)
 
         # add browser toolkit
-        self.browser = create_sync_playwright_browser()
-        toolkit = PlayWrightBrowserToolkit.from_browser(sync_browser=self.browser)
-        self.satools.extend(toolkit.get_tools())
+        try:
+            self.browser = create_sync_playwright_browser()
+            toolkit = PlayWrightBrowserToolkit.from_browser(sync_browser=self.browser)
+            self.satools.extend(toolkit.get_tools())
+        except Exception as err:
+            print(f"Error when creating playwright tool: {err}")
 
         if self.bigtask_tool:
             template = dedent("""
