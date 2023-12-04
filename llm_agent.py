@@ -213,6 +213,7 @@ class Agent(llm.Model):
             files_tool,
             shell_tool,
             ):
+        from langchain.tools import tool  # for some reason the decorator works only if it's imported in this function :O
         self.verbose = not quiet
         set_verbose(self.verbose)
         set_debug(debug)
