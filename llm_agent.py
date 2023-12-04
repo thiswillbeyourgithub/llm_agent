@@ -313,7 +313,7 @@ class Agent(llm.Model):
                     mess = mem["message"]
                     assert mess, "Empty message in memory"
                     messages.append(mess)
-                message = (f"Here are a few things you have to know:\n- " + "\n- ".join(messages)).strip()
+                message = ("Here are a few things you have to know:\n- " + "\n- ".join(messages)).strip()
                 if self.verbose:
                     print(f"Loaded from memory: '{message}")
                 memory.chat_memory.add_user_message(message)
