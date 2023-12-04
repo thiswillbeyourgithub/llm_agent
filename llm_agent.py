@@ -232,6 +232,7 @@ class Agent(llm.Model):
         os.environ["OPENAI_API_KEY"] = openai_key
 
         # load llm
+        self.cb = get_openai_callback
         chatgpt = ChatOpenAI(
                 model_name=openaimodel,
                 temperature=temperature,
@@ -564,7 +565,7 @@ class Agent(llm.Model):
         if not self.configured:
             self._configure(**options)
 
-        with get_openai_callback() as cb:
+        with self.cb() as cb:
             if question == "/debug":
                 breakpoint()
                 return "Done with debugging"
