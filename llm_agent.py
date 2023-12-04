@@ -50,7 +50,7 @@ def register_models(register):
 class Agent(llm.Model):
     VERSION = "0.3.1"
     model_id = "agent"
-    can_stream = False
+    can_stream = True
 
     class Options(llm.Options):
         quiet: Optional[bool] = Field(
@@ -236,7 +236,7 @@ class Agent(llm.Model):
                 model_name=openaimodel,
                 temperature=temperature,
                 verbose=self.verbose,
-                streaming=False,
+                streaming=True,
                 )
 
         # load some tools
@@ -565,18 +565,30 @@ class Agent(llm.Model):
             self._configure(**options)
 
         with get_openai_callback() as cb:
-            answerdict = self.agent(question)
+            if stream:
+                answerdict = self.agent.stream(question)
+                for chunk in answerdict:
+                    if chunk["intermediate_steps"]:
+                        yield chunk["intermediate_steps"]
+                    yield chunk["output"]
+                if self.verbose:
+                    print(f"\nToken so far: {cb.total_tokens} or ${cb.total_cost}")
+                return
 
-            if self.verbose:
-                print(f"\nToken so far: {cb.total_tokens} or ${cb.total_cost}")
-        if answerdict["intermediate_steps"]:
-            full_answer = "Intermediate steps:\n"
-            for i, s in enumerate(answerdict["intermediate_steps"]):
-                full_answer += f"* {i+1}: {s}\n"
-            full_answer += f"\n-> {answerdict['output']}"
-            return full_answer
-        else:
-            return answerdict["output"]
+            else:
+                answerdict = self.agent(question)
+
+                if self.verbose:
+                    print(f"\nToken so far: {cb.total_tokens} or ${cb.total_cost}")
+
+                if answerdict["intermediate_steps"]:
+                    full_answer = "Intermediate steps:\n"
+                    for i, s in enumerate(answerdict["intermediate_steps"]):
+                        full_answer += f"* {i+1}: {s}\n"
+                    full_answer += f"\n-> {answerdict['output']}"
+                    return full_answer
+                else:
+                    return answerdict["output"]
 
     def _validate_answer(self, question, answerdict, depth=0):
         "used to double check results. Can get very expensive"

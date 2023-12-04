@@ -47,5 +47,4 @@ Plugin for [llm](https://llm.datasette.io/) by the great [simonw](https://simonw
 
 
 ## TODO
-* find a way to implement streaming of tokens
 * many more to come. This is highly experimental and will be substantially improved
