@@ -564,6 +564,10 @@ class Agent(llm.Model):
         if not self.configured:
             self._configure(**options)
 
+        if question == "/debug":
+            breakpoint()
+            return "Done with debugging"
+
         with get_openai_callback() as cb:
             if stream:
                 answerdict = self.agent.stream(question)
