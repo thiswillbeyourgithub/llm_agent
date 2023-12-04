@@ -50,7 +50,7 @@ def register_models(register):
 class Agent(llm.Model):
     VERSION = "0.3.1"
     model_id = "agent"
-    can_stream = True
+    can_stream = False
 
     class Options(llm.Options):
         quiet: Optional[bool] = Field(
@@ -237,7 +237,7 @@ class Agent(llm.Model):
                 model_name=openaimodel,
                 temperature=temperature,
                 verbose=self.verbose,
-                streaming=True,
+                streaming=False,
                 )
 
         # load some tools
@@ -571,6 +571,7 @@ class Agent(llm.Model):
                 return "Done with debugging"
 
             if stream:
+                raise NotImplementedError("Streaming response is currently buggy.")
                 answerdict = self.agent.stream(question)
                 for chunk in answerdict:
                     if chunk["intermediate_steps"]:
