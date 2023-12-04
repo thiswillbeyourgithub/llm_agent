@@ -8,7 +8,7 @@ Plugin for [llm](https://llm.datasette.io/) by the great [simonw](https://simonw
 * BigTask: a tool used to autonomously split a task into subtasks
 * Shell: you can opt in to give the llm access to your shell.
 * Files: you can opt in to give the llm access to your files. This is super handy for things like "Modify VAE.py to add docstrings, also add GPU compatibility and add tests."
-* Wallet safe: there is a timeout and recursion limit to avoid too high costs. Also the number of token used so far is displayed.
+* ~~Wallet safe~~: **IT SEEMS THE LANGCHAIN COST CALCULATION IS CURRENTLY BROKEN. BE WARNED.** ~~there is a timeout and recursion limit to avoid too high costs. Also the number of token used so far is displayed.~~
 * Persistent memory: if you use the `user` argument, you can just ask the LLM to memorize something (for example "I want you to memorize that I'm a computer science engineer." or "I want you to memorize that my prefer search engine for people related question is duckduckgo.")
 
 ## Current tools available
@@ -47,5 +47,4 @@ Plugin for [llm](https://llm.datasette.io/) by the great [simonw](https://simonw
 
 
 ## TODO
-* find a way to implement streaming of tokens
 * many more to come. This is highly experimental and will be substantially improved

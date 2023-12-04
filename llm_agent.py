@@ -213,6 +213,7 @@ class Agent(llm.Model):
             files_tool,
             shell_tool,
             ):
+        from langchain.tools import tool  # for some reason the decorator works only if it's imported in this function :O
         self.verbose = not quiet
         set_verbose(self.verbose)
         set_debug(debug)
@@ -312,7 +313,7 @@ class Agent(llm.Model):
                     mess = mem["message"]
                     assert mess, "Empty message in memory"
                     messages.append(mess)
-                message = (f"Here are a few things you have to know:\n- " + "\n- ".join(messages)).strip()
+                message = ("Here are a few things you have to know:\n- " + "\n- ".join(messages)).strip()
                 if self.verbose:
                     print(f"Loaded from memory: '{message}")
                 memory.chat_memory.add_user_message(message)
@@ -373,9 +374,12 @@ class Agent(llm.Model):
                 self.satools.append(metaphor_search)
 
         # add browser toolkit
-        self.browser = create_sync_playwright_browser()
-        toolkit = PlayWrightBrowserToolkit.from_browser(sync_browser=self.browser)
-        self.satools.extend(toolkit.get_tools())
+        try:
+            self.browser = create_sync_playwright_browser()
+            toolkit = PlayWrightBrowserToolkit.from_browser(sync_browser=self.browser)
+            self.satools.extend(toolkit.get_tools())
+        except Exception as err:
+            print(f"Error when creating playwright tool: {err}")
 
         if self.bigtask_tool:
             template = dedent("""
@@ -561,18 +565,35 @@ class Agent(llm.Model):
             self._configure(**options)
 
         with get_openai_callback() as cb:
-            answerdict = self.agent(question)
+            if question == "/debug":
+                breakpoint()
+                return "Done with debugging"
 
-            if self.verbose:
-                print(f"\nToken so far: {cb.total_tokens} or ${cb.total_cost}")
-        if answerdict["intermediate_steps"]:
-            full_answer = "Intermediate steps:\n"
-            for i, s in enumerate(answerdict["intermediate_steps"]):
-                full_answer += f"* {i+1}: {s}\n"
-            full_answer += f"\n-> {answerdict['output']}"
-            return full_answer
-        else:
-            return answerdict["output"]
+            if stream:
+                raise NotImplementedError("Streaming response is currently buggy.")
+                answerdict = self.agent.stream(question)
+                for chunk in answerdict:
+                    if chunk["intermediate_steps"]:
+                        yield chunk["intermediate_steps"]
+                    yield chunk["output"]
+                if self.verbose:
+                    print(f"\nToken so far: {cb.total_tokens} or ${cb.total_cost}")
+                return
+
+            else:
+                answerdict = self.agent(question)
+
+                if self.verbose:
+                    print(f"\nToken so far: {cb.total_tokens} or ${cb.total_cost}")
+
+                if answerdict["intermediate_steps"]:
+                    full_answer = "Intermediate steps:\n"
+                    for i, s in enumerate(answerdict["intermediate_steps"]):
+                        full_answer += f"* {i+1}: {s}\n"
+                    full_answer += f"\n-> {answerdict['output']}"
+                    return full_answer
+                else:
+                    return answerdict["output"]
 
     def _validate_answer(self, question, answerdict, depth=0):
         "used to double check results. Can get very expensive"
