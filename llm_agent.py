@@ -252,10 +252,9 @@ class Agent(llm.Model):
         self.satools += load_tools(["wikipedia"], llm=chatgpt)
         self.satools += load_tools(["arxiv"], llm=chatgpt)
 
-        # pubmed is a bit buggy at the moment
-        # pubmed_tool = PubmedQueryRun()
-        # pubmed_tool.description += f"args {pubmed_tool.args}".replace("{", "{{").replace("}", "}}")
-        # self.satools += pubmed_tool
+        pubmed_tool = PubmedQueryRun()
+        pubmed_tool.description += f"args {pubmed_tool.args}".replace("{", "{{").replace("}", "}}")
+        self.satools.append(pubmed_tool)
 
         if files_tool:
             toolkit = FileManagementToolkit(
@@ -268,12 +267,12 @@ class Agent(llm.Model):
                         "copy_file",
                         # "delete_file",
                         ])
-            self.atools += toolkit.get_tools()
-            self.satools += toolkit.get_tools()
+            self.atools.append(toolkit.get_tools())
+            self.satools.append(toolkit.get_tools())
 
         if shell_tool:
-            self.atools += ShellTool()
-            self.satools += ShellTool()
+            self.atools.append(ShellTool())
+            self.satools.append(ShellTool())
 
         # init memories
         memory = ConversationBufferMemory(
