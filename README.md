@@ -1,6 +1,9 @@
 # llm_agent
 Plugin for [llm](https://llm.datasette.io/) by the great [simonw](https://simonwillison.net/) to add a simple langchain agent.
 
+# PROJECT STATUS
+**This projected started as a question / proof of concept and eventually worked somewhat well but due to the limitations of the quickly changing langchain at the time I had to stop. The core is still sound and I may come around to pick up the project later but until then consider that an unfinished project in limbo. Don't hesitate to contribute though! The code is fairly minimalist and was hacked together in a few hours over a few days.**
+
 ## Features
 * Multiple search engines: duckduckgo, metaphor, tavily, wikipedia, pubmed, arxiv etc.
 * Browser tool: use playwright to browse the internet autonomously.
